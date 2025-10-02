@@ -50,6 +50,11 @@
 
     <div class="mt-5">
         <hr>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
         <a href="#" class="nav-link"><i class="bi bi-gear"></i> Settings</a>
         <br>
         <a href="#" class="nav-link"><i class="bi bi-box-arrow-right"></i> Log Out</a>

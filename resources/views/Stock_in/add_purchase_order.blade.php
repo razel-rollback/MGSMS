@@ -1,15 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Add Purchase Order')
-
 @section('content')
 <div class="col-md-12 p-4 bg-light">
 
     <!-- Top Bar -->
-    <div class="d-flex justify-content-between align-items-center topbar mb-4">
+    <div class="d-flex justify-content-between align-items-center topbar mb-2">
         <!-- Search -->
-        <form action="" method="GET" class="d-flex w-50">
-            <input class="form-control me-2" type="search" placeholder="Search product, supplier, order">
+        <form action="#" method="GET" class="d-flex w-50">
+            <input class="form-control me-2" type="search" name="query" placeholder="Search">
             <button class="btn btn-primary" type="submit">
                 <i class="bi bi-search"></i>
             </button>
@@ -19,64 +17,65 @@
         <div class="d-flex align-items-center">
             <button class="btn btn-light position-relative me-3">
                 <i class="bi bi-bell fs-5"></i>
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">!</span>
             </button>
             <img src="{{ asset('images/user.png') }}" class="rounded-circle" width="40" alt="User">
         </div>
     </div>
 
-    <!-- Order Details -->
-    <div class="form-section mb-4 p-3 bg-white rounded shadow-sm">
-        <h5 class="mb-3">Order Details</h5>
-        <div class="row g-3">
-            <div class="col-md-3">
-                <label class="form-label">PO Number</label>
-                <input type="text" class="form-control" placeholder="Enter PO Number">
+    <!-- Order Details Form -->
+    <form action="#" method="POST">
+        <div class="form-section mb-3 p-3 bg-white rounded shadow-sm">
+            <h5 class="mb-3">Order Details</h5>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label for="po_number" class="form-label">PO Number</label>
+                    <input type="text" name="po_number" id="po_number" class="form-control" placeholder="Enter">
+                </div>
+                <div class="col-md-3">
+                    <label for="supplier_id" class="form-label">Supplier Name</label>
+                    <select name="supplier_id" id="supplier_id" class="form-select">
+                        <option value="">Select Supplier</option>
+                        <option value="1">Supplier 1</option>
+                        <option value="2">Supplier 2</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="order_date" class="form-label">Order Date</label>
+                    <input type="date" name="order_date" id="order_date" class="form-control">
+                </div>
+                <div class="col-md-3">
+                    <label for="delivery_date" class="form-label">Delivery Date</label>
+                    <input type="date" name="delivery_date" id="delivery_date" class="form-control">
+                </div>
             </div>
-            <div class="col-md-3">
-                <label class="form-label">Supplier Name</label>
-                <select class="form-select">
-                    <option>Select Supplier</option>
-                    <option>Supplier 1</option>
-                    <option>Supplier 2</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">Order Date</label>
-                <input type="date" class="form-control">
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">Delivery Date</label>
-                <input type="date" class="form-control">
-            </div>
-        </div>
 
-        <!-- Order Items -->
-        <h6 class="mt-4">Order Items</h6>
-        <div class="row g-3 align-items-end">
-            <div class="col-md-4">
-                <label class="form-label">Item</label>
-                <select class="form-select">
-                    <option>Select Item</option>
-                    <option>Item A</option>
-                    <option>Item B</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Quantity</label>
-                <input type="number" class="form-control" placeholder="0">
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">Unit Price</label>
-                <input type="number" class="form-control" placeholder="0.00">
-            </div>
-            <div class="col-md-2">
-                <button class="btn btn-primary w-100">
-                    <i class="bi bi-plus-circle"></i> Add Item
-                </button>
+            <!-- Order Items -->
+            <h6 class="mt-4">Order Items</h6>
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="item_id" class="form-label">Item</label>
+                    <select name="item_id" id="item_id" class="form-select">
+                        <option value="">Select Item</option>
+                        <option value="A">Item A</option>
+                        <option value="B">Item B</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="quantity" class="form-label">Quantity</label>
+                    <input type="number" name="quantity" id="quantity" class="form-control" placeholder="0">
+                </div>
+                <div class="col-md-3">
+                    <label for="unit_price" class="form-label">Unit Price</label>
+                    <input type="number" name="unit_price" id="unit_price" class="form-control" placeholder="0.00" readonly>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-primary w-100">
+                        <i class="bi bi-plus-circle"></i> Add Item
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
+    </form>
 
     <!-- Products Table -->
     <div class="table-section p-3 bg-white rounded shadow-sm">

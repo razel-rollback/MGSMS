@@ -29,7 +29,7 @@
         .topbar {
             background: #b2f0f5;
             border-radius: 8px;
-            padding: 10px 15px;
+            padding: 4px 5px;
         }
 
         /* Cards */
@@ -37,8 +37,7 @@
             border-radius: 12px;
             box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
         }
-        .card-summary h6,
-        .card-summary h4 {
+        .card-summary h6 {
             font-weight: bold;
         }
 
@@ -74,10 +73,7 @@
             @include('layouts.sidebar')
 
             {{-- Page Content --}}
-            <div class="col-md-10 p-4">
-                <div class="topbar mb-4">
-                    <h4>@yield('title')</h4>
-                </div>
+            <div class="col-md-10 p-2">
 
                 @yield('content')
             </div>

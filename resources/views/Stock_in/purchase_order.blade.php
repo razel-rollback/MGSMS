@@ -1,7 +1,5 @@
 @extends('layouts.app')
 
-@section('title', 'Purchase Orders')
-
 @section('content')
 <div class="col-md-12 p-4 bg-light">
 
