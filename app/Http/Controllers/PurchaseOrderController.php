@@ -11,7 +11,7 @@ class PurchaseOrderController extends Controller
     public function index()
     {
         $purchaseOrders = PurchaseOrder::latest()->paginate(10);
-        return view('Stock_in.purchase_order1', compact('purchaseOrders'));
+        return view('Stock_in.purchase_order', compact('purchaseOrders'));
     }
 
     public function show($id)
@@ -36,42 +36,45 @@ class PurchaseOrderController extends Controller
 
     // Purchase_add1
     public function create()
-    {
-        return view('purchase_add1');
-    }
+{
+    // points to resources/views/purchase_order/create.blade.php
+    return view('purchase_order.create');
+}
 
-    // Save the purchase order and items
-    public function storeWithItems(Request $request)
-    {
-        $request->validate([
-            'po_number' => 'required|unique:purchase_orders,po_number',
-            'supplier_name' => 'required',
-            'order_date' => 'required|date',
-            'delivery_date' => 'required|date',
-        ]);
+// Save the purchase order and items
+public function store(Request $request)
+{
+    $request->validate([
+        'po_number'      => 'required|unique:purchase_orders,po_number',
+        'supplier_name'  => 'required',
+        'order_date'     => 'required|date',
+        'delivery_date'  => 'required|date',
+    ]);
 
-        // Create purchase order
-        $order = PurchaseOrder::create([
-            'po_number' => $request->po_number,
-            'supplier_name' => $request->supplier_name,
-            'order_date' => $request->order_date,
-            'delivery_date' => $request->delivery_date,
-        ]);
+    // Create purchase order
+    $order = PurchaseOrder::create([
+        'po_number'     => $request->po_number,
+        'supplier_name' => $request->supplier_name,
+        'order_date'    => $request->order_date,
+        'delivery_date' => $request->delivery_date,
+    ]);
 
-        // Insert items if any
-        if ($request->items) {
-            foreach ($request->items as $item) {
-                PurchaseItem::create([
-                    'purchase_order_id' => $order->id,
-                    'item_name' => $item['name'],
-                    'unit' => $item['unit'],
-                    'quantity' => $item['quantity'],
-                    'unit_price' => $item['unit_price'],
-                    'subtotal' => $item['quantity'] * $item['unit_price'],
-                ]);
-            }
+    // Insert items if any
+    if ($request->items) {
+        foreach ($request->items as $item) {
+            PurchaseItem::create([
+                'purchase_order_id' => $order->id,
+                'item_name'         => $item['name'],
+                'unit'              => $item['unit'],
+                'quantity'          => $item['quantity'],
+                'unit_price'        => $item['unit_price'],
+                'subtotal'          => $item['quantity'] * $item['unit_price'],
+            ]);
         }
-
-        return redirect()->route('purchase.add')->with('success', 'Purchase Order Created Successfully');
     }
+
+    return redirect()
+        ->route('purchase_order.index')
+        ->with('success', 'Purchase Order Created Successfully');
+}
 }
