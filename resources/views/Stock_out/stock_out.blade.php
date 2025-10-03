@@ -7,7 +7,7 @@
     <div class="d-flex justify-content-between align-items-center topbar mb-3">
         <!-- Search -->
         <form action="#" method="GET" class="d-flex w-50">
-            <input class="form-control me-2" type="search" name="query" placeholder="Search product, supplier, order">
+            <input class="form-control me-2" type="search" name="query" placeholder="Search">
             <button class="btn btn-primary" type="submit">
                 <i class="bi bi-search"></i>
             </button>
@@ -17,7 +17,6 @@
         <div class="d-flex align-items-center">
             <button class="btn btn-light position-relative me-3">
                 <i class="bi bi-bell fs-5"></i>
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">!</span>
             </button>
             <img src="{{ asset('images/user.png') }}" class="rounded-circle" width="40" alt="User">
         </div>
@@ -95,34 +94,51 @@
         </div>
 
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
+            <!-- Added text-center for centered content -->
+            <table class="table table-hover table-bordered align-middle text-center">
                 <thead class="table-light">
                     <tr>
-                        <th>Item Name</th>
-                        <th>Quantity</th>
-                        <th>Action</th>
+                        <th class="fw-bold">Item Name</th>
+                        <th class="fw-bold">Quantity</th>
+                        <th class="fw-bold">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>Mug</td>
                         <td>50</td>
-                        <td><button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
                     </tr>
                     <tr>
                         <td>Umbrella</td>
                         <td>40</td>
-                        <td><button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
                     </tr>
                     <tr>
                         <td>Bag</td>
                         <td>70</td>
-                        <td><button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
                     </tr>
                     <tr>
                         <td>Pillow</td>
                         <td>70</td>
-                        <td><button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
                     </tr>
                 </tbody>
             </table>

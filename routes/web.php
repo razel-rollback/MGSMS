@@ -24,9 +24,9 @@ Route::get('/deliveries', function () {
 // Resource route for purchase orders
 Route::resource('purchase_order', PurchaseOrderController::class);
 
-// Stock Out Page
-Route::view('/Stock_out', 'Stock_out.stock_out')->name('stock_out');
+// Stock Out main page
+Route::view('/stock_out', 'Stock_out.stock_out')->name('stock_out');
 
-// Stock Out Request Page
-Route::view('/stockout/request', 'Stock_out.stockout_request')->name('stockout.request');
+// Stock Out Request page
+Route::view('/stock_out/request', 'Stock_out.stock_out_request')->name('stock_out.request');
 

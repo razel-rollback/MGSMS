@@ -7,7 +7,7 @@
     <div class="d-flex justify-content-between align-items-center topbar mb-3">
         <!-- Search -->
         <form action="#" method="GET" class="d-flex w-50">
-            <input class="form-control me-2" type="search" name="query" placeholder="Search product, supplier, order">
+            <input class="form-control me-2" type="search" name="query" placeholder="Search">
             <button class="btn btn-primary" type="submit">
                 <i class="bi bi-search"></i>
             </button>
@@ -17,31 +17,30 @@
         <div class="d-flex align-items-center">
             <button class="btn btn-light position-relative me-3">
                 <i class="bi bi-bell fs-5"></i>
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">!</span>
             </button>
             <img src="{{ asset('images/user.png') }}" class="rounded-circle" width="40" alt="User">
         </div>
     </div>
 
-    <!-- Stock Out Request Table -->
-    <div class="table-section p-3 bg-white rounded shadow-sm">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="mb-0">Stock Out Request</h5>
-            <div>
-                <a href="{{ route('stockout.create') }}" class="btn btn-primary btn-sm">
-                    <i class="bi bi-plus-circle"></i> Request Stock Out
-                </a>
-                <button class="btn btn-outline-secondary btn-sm">
-                    <i class="bi bi-funnel"></i> Filters
-                </button>
-                <button class="btn btn-outline-secondary btn-sm">
-                    <i class="bi bi-download"></i> Download All
-                </button>
-            </div>
-        </div>
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-end mb-3">
+        <button class="btn btn-primary me-2">
+            <i class="bi bi-plus-circle"></i> Request Stock Out
+        </button>
+        <button class="btn btn-outline-secondary me-2">
+            <i class="bi bi-funnel"></i> Filters
+        </button>
+        <button class="btn btn-outline-secondary">
+            <i class="bi bi-download"></i> Download All
+        </button>
+    </div>
 
+    <!-- Stock Out Request Table -->
+    <div class="bg-white p-3 rounded shadow-sm">
+        <h5 class="mb-3">Stock Out Request</h5>
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
+            <!-- Added text-center to center all table content -->
+            <table class="table table-hover table-bordered align-middle text-center">
                 <thead class="table-light">
                     <tr>
                         <th>Job Order ID</th>
@@ -62,8 +61,8 @@
                         <td>2025-10-05</td>
                         <td><span class="badge bg-success">Approved</span></td>
                         <td>
-                            <a href="#" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></a>
-                            <a href="#" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+                            <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
+                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
                         </td>
                     </tr>
                     <tr>
@@ -74,8 +73,8 @@
                         <td>2025-10-07</td>
                         <td><span class="badge bg-danger">Rejected</span></td>
                         <td>
-                            <a href="#" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></a>
-                            <a href="#" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+                            <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
+                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
                         </td>
                     </tr>
                     <tr>
@@ -86,8 +85,8 @@
                         <td>2025-10-10</td>
                         <td><span class="badge bg-warning text-dark">Pending</span></td>
                         <td>
-                            <a href="#" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></a>
-                            <a href="#" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+                            <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
+                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
                         </td>
                     </tr>
                 </tbody>
