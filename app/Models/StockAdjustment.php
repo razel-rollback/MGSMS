@@ -5,25 +5,27 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class StockInRequest extends Model
+class StockAdjustment extends Model
 {
     use SoftDeletes;
 
-    protected $primaryKey = 'stock_in_id';
+    protected $primaryKey = 'adjustment_id';
     protected $fillable = [
-        'po_id',
-        'delivery_id',
+        'item_id',
         'requested_by',
         'requested_at',
         'status',
         'approved_by',
         'approved_at',
-        'note',
+        'adjustment_type',
+        'quantity',
+        'reason',
     ];
 
     protected function casts(): array
     {
         return [
+            'quantity' => 'integer',
             'requested_at' => 'datetime',
             'approved_at' => 'datetime',
             'created_at' => 'datetime',
@@ -33,23 +35,15 @@ class StockInRequest extends Model
     }
 
     /**
-     * Get the purchase order for the stock in request.
+     * Get the inventory item for the stock adjustment.
      */
-    public function purchaseOrder()
+    public function inventoryItem()
     {
-        return $this->belongsTo(PurchaseOrder::class, 'po_id', 'po_id');
+        return $this->belongsTo(IventoryItem::class, 'item_id', 'item_id');
     }
 
     /**
-     * Get the delivery for the stock in request.
-     */
-    public function delivery()
-    {
-        return $this->belongsTo(Delivery::class, 'delivery_id', 'delivery_id');
-    }
-
-    /**
-     * Get the employee who requested the stock in.
+     * Get the employee who requested the stock adjustment.
      */
     public function requester()
     {
@@ -57,18 +51,10 @@ class StockInRequest extends Model
     }
 
     /**
-     * Get the employee who approved the stock in request.
+     * Get the employee who approved the stock adjustment.
      */
     public function approver()
     {
         return $this->belongsTo(Employee::class, 'approved_by', 'employee_id');
-    }
-
-    /**
-     * Get the stock in items for the stock in request.
-     */
-    public function stockInItems()
-    {
-        return $this->hasMany(StockIntItem::class, 'stock_in_id', 'stock_in_id');
     }
 }

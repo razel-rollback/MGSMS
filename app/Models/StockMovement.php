@@ -5,15 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class DeliveryItem extends Model
+class StockMovement extends Model
 {
     use SoftDeletes;
 
-    protected $primaryKey = 'di_id';
+    protected $primaryKey = 'movement_id';
     protected $fillable = [
-        'delivery_id',
         'item_id',
+        'movement_type',
+        'reference_type',
+        'reference_id',
         'quantity',
+        'created_by',
         'note',
     ];
 
@@ -28,18 +31,18 @@ class DeliveryItem extends Model
     }
 
     /**
-     * Get the delivery that owns the delivery item.
-     */
-    public function delivery()
-    {
-        return $this->belongsTo(Delivery::class, 'delivery_id', 'delivery_id');
-    }
-
-    /**
-     * Get the inventory item for the delivery item.
+     * Get the inventory item for the stock movement.
      */
     public function inventoryItem()
     {
         return $this->belongsTo(IventoryItem::class, 'item_id', 'item_id');
+    }
+
+    /**
+     * Get the employee who created the stock movement.
+     */
+    public function creator()
+    {
+        return $this->belongsTo(Employee::class, 'created_by', 'employee_id');
     }
 }

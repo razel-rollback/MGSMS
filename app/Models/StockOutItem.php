@@ -5,25 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class PurchaseOrderItem extends Model
+class StockOutItem extends Model
 {
     use SoftDeletes;
 
-    protected $primaryKey = 'poi_id';
+    protected $primaryKey = 'soi_id';
     protected $fillable = [
-        'po_id',
+        'stock_out_id',
         'item_id',
         'quantity',
-        'unit_price',
-        'subtotal',
+        'status',
     ];
 
     protected function casts(): array
     {
         return [
             'quantity' => 'integer',
-            'unit_price' => 'decimal:2',
-            'subtotal' => 'decimal:2',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
             'deleted_at' => 'datetime',
@@ -31,15 +28,15 @@ class PurchaseOrderItem extends Model
     }
 
     /**
-     * Get the purchase order that owns the purchase order item.
+     * Get the stock out request that owns the stock out item.
      */
-    public function purchaseOrder()
+    public function stockOutRequest()
     {
-        return $this->belongsTo(PurchaseOrder::class, 'po_id', 'po_id');
+        return $this->belongsTo(StockOutRequest::class, 'stock_out_id', 'stock_out_id');
     }
 
     /**
-     * Get the inventory item for the purchase order item.
+     * Get the inventory item for the stock out item.
      */
     public function inventoryItem()
     {
