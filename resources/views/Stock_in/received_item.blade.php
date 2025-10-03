@@ -3,25 +3,6 @@
 @section('content')
 <div class="col-md-12 p-4 bg-light">
 
-    <!-- Top Bar -->
-    <div class="d-flex justify-content-between align-items-center topbar mb-1">
-        <!-- Search -->
-        <form action="#" method="GET" class="d-flex w-50">
-            <input class="form-control me-2" type="search" name="query" placeholder="Search">
-            <button class="btn btn-primary" type="submit">
-                <i class="bi bi-search"></i>
-            </button>
-        </form>
-
-        <!-- Notifications + User -->
-        <div class="d-flex align-items-center">
-            <button class="btn btn-light position-relative me-3">
-                <i class="bi bi-bell fs-5"></i>
-            </button>
-            <img src="{{ asset('images/user.png') }}" class="rounded-circle" width="40" alt="User">
-        </div>
-    </div>
-
 
     <!-- Delivery Details -->
     <div class="form-section mb-4 p-3 bg-white rounded shadow-sm">
@@ -114,7 +95,7 @@
         let qty = document.getElementById("quantity").value;
         let table = document.getElementById("requestTable").getElementsByTagName("tbody")[0];
 
-        if(item && qty > 0) {
+        if (item && qty > 0) {
             let newRow = `
                 <tr>
                     <td>${item}</td>
