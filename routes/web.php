@@ -30,3 +30,20 @@ Route::view('/stock_out', 'Stock_out.stock_out')->name('stock_out');
 // Stock Out Request page
 Route::view('/stock_out/request', 'Stock_out.stock_out_request')->name('stock_out.request');
 
+// Stock Adjustment main page
+Route::view('/stock_adjustment', 'Stock_adjustment.stock_adjustment')
+    ->name('stock_adjustment');
+
+// Stock Adjustment Information page
+Route::view('/stock_adjustment/information', 'Stock_adjustment.stock_information')
+    ->name('stock_adjustment.information');
+
+// Stock Report main page
+Route::view('/stock_report', 'Stock_reports.stock_report')
+    ->name('stock_report');
+
+// Stock Report detail
+Route::view('/stock_report/view', 'Stock_reports.stock_view')
+    ->name('stock_report.view');
+
+

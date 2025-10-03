@@ -3,7 +3,7 @@
 @section('content')
 <div class="col-md-12 p-4 bg-light">
 
-    <!-- Top Bar -->
+   <!-- Top Bar -->
     <div class="d-flex justify-content-between align-items-center topbar mb-3">
         <!-- Search -->
         <form action="#" method="GET" class="d-flex w-50">
@@ -22,34 +22,50 @@
         </div>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="d-flex justify-content-end mb-3">
-        <button class="btn btn-primary me-2">
-            <i class="bi bi-plus-circle"></i> Request Stock Out
-        </button>
-        <button class="btn btn-outline-secondary me-2">
-            <i class="bi bi-funnel"></i> Filters
-        </button>
-        <button class="btn btn-outline-secondary">
-            <i class="bi bi-download"></i> Download All
-        </button>
+    <!-- Action Buttons + Search -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">Stock Out Requests</h5>
+        <div class="d-flex align-items-center gap-2">
+            <!-- Search Form -->
+            <form action="#" method="GET" class="d-flex">
+                <div class="input-group input-group-sm">
+                    <input type="search" name="query" class="form-control border-primary" placeholder="Search">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Request Stock Out -->
+            <button class="btn btn-primary btn-sm">
+                <i class="bi bi-plus-circle"></i> Request Stock Out
+            </button>
+
+            <!-- Filters -->
+            <button class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-funnel"></i> Filters
+            </button>
+
+            <!-- Download All -->
+            <button class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-download"></i> Download All
+            </button>
+        </div>
     </div>
 
     <!-- Stock Out Request Table -->
     <div class="bg-white p-3 rounded shadow-sm">
-        <h5 class="mb-3">Stock Out Request</h5>
         <div class="table-responsive">
-            <!-- Added text-center to center all table content -->
             <table class="table table-hover table-bordered align-middle text-center">
                 <thead class="table-light">
                     <tr>
-                        <th>Job Order ID</th>
-                        <th>Requested By</th>
-                        <th>Customer Name</th>
-                        <th>Purpose</th>
-                        <th>Due Date</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th class="fw-bold">Job Order ID</th>
+                        <th class="fw-bold">Requested By</th>
+                        <th class="fw-bold">Customer Name</th>
+                        <th class="fw-bold">Purpose</th>
+                        <th class="fw-bold">Due Date</th>
+                        <th class="fw-bold">Status</th>
+                        <th class="fw-bold">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

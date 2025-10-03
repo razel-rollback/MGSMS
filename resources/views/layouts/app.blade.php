@@ -57,7 +57,7 @@
 
         /* Buttons */
         .btn-primary {
-            background-color: #007bff;
+            background-color: #4499f5ff;
             border: none;
         }
         .btn-outline-secondary {
