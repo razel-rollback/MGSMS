@@ -12,6 +12,18 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
 
+    <style>
+        /* Buttons */
+        .btn-primary {
+            background-color: #4499f5ff;
+            border: none;
+        }
+
+        .btn-outline-secondary {
+            border-color: #bbb;
+            color: #333;
+        }
+    </style>
 </head>
 
 <body>
