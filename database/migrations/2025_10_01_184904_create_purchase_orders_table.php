@@ -20,7 +20,6 @@ return new class extends Migration
             $table->decimal('total_amount', 14, 2)->default(0.00);
             $table->string('status', 30)->default('draft');
             $table->unsignedBigInteger('created_by')->nullable();
-            $table->timestamp('created_at')->nullable();
             $table->unsignedBigInteger('approved_by')->nullable();
             $table->timestamp('approved_at')->nullable();
             $table->timestamps();

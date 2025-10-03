@@ -19,7 +19,6 @@ return new class extends Migration
             $table->unsignedBigInteger('reference_id');
             $table->integer('quantity');
             $table->unsignedBigInteger('created_by');
-            $table->timestamp('created_at')->useCurrent();
             $table->string('note', 255)->nullable();
             $table->foreign('item_id')->references('item_id')->on('inventory_items');
             $table->foreign('created_by')->references('employee_id')->on('employees');

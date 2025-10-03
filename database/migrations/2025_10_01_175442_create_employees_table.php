@@ -35,7 +35,7 @@ return new class extends Migration
             // Drop foreign key constraints
             // Replace 'employees_department_id_foreign' with the actual foreign key name
             // or use the column name in an array if Laravel automatically named it.
-            $table->dropForeign(['department_id']); // Example for a 'department_id' foreign key
+            $table->dropForeign(['user_id']); // Example for a 'department_id' foreign key
             // Add other dropForeign calls for any other foreign keys on the 'employees' table
         });
         Schema::dropIfExists('employees');

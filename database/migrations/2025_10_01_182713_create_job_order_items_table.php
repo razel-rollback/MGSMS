@@ -22,6 +22,9 @@ return new class extends Migration
             $table->decimal('subtotal', 14, 2)->storedAs('quantity * unit_price');
             $table->timestamps();
             $table->softDeletes();
+            $table->foreign('job_order_id')->references('job_order_id')->on('job_orders')->onDelete('cascade');
+            $table->foreign('service_id')->references('service_id')->on('services')->onDelete('set null');
+            $table->foreign('item_id')->references('item_id')->on('inventory_items')->onDelete('set null');
         });
     }
 
