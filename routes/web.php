@@ -21,12 +21,12 @@ Route::get('/deliveries', function () {
     return view('Stock_in.deliveries');
 });
 
-// Resource route for purchase orders (CRUD)
+// Resource route for purchase orders
 Route::resource('purchase_order', PurchaseOrderController::class);
 
 // Stock Out Page
 Route::view('/Stock_out', 'Stock_out.stock_out')->name('stock_out');
 
-
-
+// Stock Out Request Page
+Route::view('/stockout/request', 'Stock_out.stockout_request')->name('stockout.request');
 
