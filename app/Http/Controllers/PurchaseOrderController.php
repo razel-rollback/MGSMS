@@ -11,7 +11,7 @@ class PurchaseOrderController extends Controller
     public function index()
     {
         $purchaseOrders = PurchaseOrder::latest()->paginate(10);
-        return view('Stock_in.purchase_order', compact('purchaseOrders'));
+        return view('purchase_order.purchase_order-index', compact('purchaseOrders'));
     }
 
     public function show($id)
@@ -37,8 +37,7 @@ class PurchaseOrderController extends Controller
     // Purchase_add1
     public function create()
     {
-        // points to resources/views/purchase_order/create.blade.php
-        return view('purchase_order.create');
+        return view('purchase_order.purchase_order-create');
     }
 
     // Save the purchase order and items

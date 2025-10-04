@@ -12,7 +12,7 @@ class DeliveryController extends Controller
      */
     public function index()
     {
-        //
+        return view('delivery.deliveries-index');
     }
 
     /**
@@ -20,7 +20,7 @@ class DeliveryController extends Controller
      */
     public function create()
     {
-        //
+        return view('delivery.deliveries-add');
     }
 
     /**

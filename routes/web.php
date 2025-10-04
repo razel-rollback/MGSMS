@@ -2,49 +2,43 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\StockAdjustmentController;
+use App\Http\Controllers\StockOutController;
+use App\Http\Controllers\StockReportController;
+
 // Redirect root to dashboard
 Route::get('/', function () {
     return redirect()->route('dashboard');
 });
 
 // Route for Dashboard
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/Dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-// route for "Add Purchase Order" 
-Route::get('/purchase_order/add_purchase_order', function () {
-    return view('Stock_in.add_purchase_order');
-})->name('purchase_order.add');
 
-// Received Item Page
-Route::view('/purchase_order/received_item', 'Stock_in.received_item')
-    ->name('purchase_order.received_item');
 
-Route::get('/deliveries', function () {
-    return view('Stock_in.deliveries');
-});
-
-// Resource route for purchase orders
 Route::resource('purchase_order', PurchaseOrderController::class);
+//Route::get('/Purchase-Order', [PurchaseOrderController::class, 'index'])->name('purchase_order_index');
+//Route::get('/Purchase-Order/create', [PurchaseOrderController::class, 'create'])->name('purchase_order_create');
 
-// Stock Out main page
-Route::view('/stock_out', 'Stock_out.stock_out')->name('stock_out');
 
-// Stock Out Request page
-Route::view('/stock_out/request', 'Stock_out.stock_out_request')->name('stock_out.request');
+Route::resource('delivery', DeliveryController::class);
+//Route::get('/Delivery', [DeliveryController::class, 'index'])->name('delivery_index');
+//Route::get('/Delivery/create', [DeliveryController::class, 'create'])->name('delivery_create');
 
-// Stock Adjustment main page
-Route::view('/stock_adjustment', 'Stock_adjustment.stock_adjustment')
-    ->name('stock_adjustment');
+//Route::resource('stock_in', StockInController::class);
+//Route::get('/Stock-In', [StockInController::class, 'index'])->name('stock_in_index');
+//Route::get('/Stock-In/create', [StockInController::class, 'create'])->name('stock_in_create');
 
-// Stock Adjustment Information page
-Route::view('/stock_adjustment/information', 'Stock_adjustment.stock_information')
-    ->name('stock_adjustment.information');
 
-// Stock Report main page
-Route::view('/stock_report', 'Stock_reports.stock_report')
-    ->name('stock_report');
 
-// Stock Report detail
-Route::view('/stock_report/view', 'Stock_reports.stock_view')
-    ->name('stock_report.view');
+Route::resource('stock_out', StockOutController::class);
+//Route::get('/Stock-Out', [StockOutController::class, 'index'])->name('stock_out_index');
+//Route::get('/Stock-Out/create', [StockOutController::class, 'create'])->name('stock_out_create');
+
+Route::resource('stock_adjustment', StockAdjustmentController::class);
+
+//Route::resource('stock_report', StockReportController::class);
+Route::get('/Stock-Report', [StockReportController::class, 'index'])->name('stock_reports_index');
+Route::get('/Stock-Report/Generate', [StockReportController::class, 'generate'])->name('stock_reports_generate');

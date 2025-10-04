@@ -105,7 +105,7 @@
 <!-- Sidebar -->
 <div id="sidebar" class="col-md-2 sidebar p-3 font">
     <div>
-        <div class="text-center mb-4 d-flex justify-content-between align-items-center">
+        <div class="text-center mb-4 d-flex justify-content-center align-items-center">
             <img src="{{ asset('images/LOGO.jpg') }}" alt="Logo" class="img-fluid" style="max-width:120px;">
             <div>
                 <button class="btn btn-primary d-md-none m-2" onclick="toggleSidebar()">
@@ -121,24 +121,41 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ route('purchase_order.add') }}"
-                    class="nav-link {{ request()->is('purchase_order/add') ? 'active' : '' }}">
+                <a href="{{ route('purchase_order.index') }}"
+                    class="nav-link">
                     <i class="bi bi-bag me-2"></i> Purchase Order
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link {{ request()->is('stock_out*') ? 'active' : '' }}">
-                    <i class="bi bi-box-arrow-up me-2"></i> Stock Out
+                <a href="{{ route('delivery.index') }}"
+                    class="nav-link">
+                    <i class="bi bi-bag me-2"></i> Deliveries
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link {{ request()->is('stock_adjustment*') ? 'active' : '' }}">
+                <a href="#" class="nav-link {{ request()->is('stock_out*') ? 'active' : '' }}">
+                    <i class="bi bi-box-arrow-up me-2"></i> Stock In
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('stock_out.index') }}" class="nav-link {{ request()->is('stock_out*') ? 'active' : '' }}">
+                    <i class="bi bi-box-arrow-up me-2"></i> Stock Out
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ route('stock_adjustment.index') }}" class="nav-link {{ request()->is('stock_adjustment*') ? 'active' : '' }}">
                     <i class="bi bi-arrow-repeat me-2"></i> Stock Adjustment
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link {{ request()->is('reports*') ? 'active' : '' }}">
+                <a href="{{ route('stock_reports_index') }}" class="nav-link {{ request()->is('reports*') ? 'active' : '' }}">
                     <i class="bi bi-graph-up me-2"></i> Reports
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link {{ request()->is('suppliers*') ? 'active' : '' }}">
+                    <i class="bi bi-people me-2"></i> Items
                 </a>
             </li>
             <li class="nav-item">
@@ -147,8 +164,28 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a href="#" class="nav-link {{ request()->is('suppliers*') ? 'active' : '' }}">
+                    <i class="bi bi-people me-2"></i> Employees
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link {{ request()->is('suppliers*') ? 'active' : '' }}">
+                    <i class="bi bi-people me-2"></i> Customer
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="#" class="nav-link {{ request()->is('orders*') ? 'active' : '' }}">
                     <i class="bi bi-cart me-2"></i> Orders
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link {{ request()->is('orders*') ? 'active' : '' }}">
+                    <i class="bi bi-cart me-2"></i> Product Workflow
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link {{ request()->is('orders*') ? 'active' : '' }}">
+                    <i class="bi bi-cart me-2"></i> Service
                 </a>
             </li>
             <li class="nav-item">

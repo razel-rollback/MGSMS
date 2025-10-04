@@ -20,7 +20,8 @@ return new class extends Migration
             $table->timestamp('delivered_date')->useCurrent();
             $table->unsignedBigInteger('received_by')->nullable();
             $table->timestamp('received_at')->nullable();
-            $table->string('status', 30)->default('delivered');
+            $table->string('status', 30)->default('Pending');
+            //Pending 
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('po_id')->references('po_id')->on('purchase_orders')->onDelete('set null');

@@ -10,7 +10,7 @@
             <h5 class="mb-0">Purchase Orders</h5>
             <div>
 
-                <a href="{{ route ('purchase_order-add') }}" class="btn btn-primary btn-sm me-2">
+                <a href="{{ route ('purchase_order.create') }}" class="btn btn-primary btn-sm me-2">
                     <i class="bi bi-plus-circle"></i> Purchase Order
                 </a>
                 <button class="btn btn-outline-secondary btn-sm">

@@ -3,24 +3,7 @@
 @section('content')
 <div class="col-md-12 p-4 bg-light">
 
-   <!-- Top Bar -->
-    <div class="d-flex justify-content-between align-items-center topbar mb-3">
-        <!-- Search -->
-        <form action="#" method="GET" class="d-flex w-50">
-            <input class="form-control me-2" type="search" name="query" placeholder="Search">
-            <button class="btn btn-primary" type="submit">
-                <i class="bi bi-search"></i>
-            </button>
-        </form>
 
-        <!-- Notifications + User -->
-        <div class="d-flex align-items-center">
-            <button class="btn btn-light position-relative me-3">
-                <i class="bi bi-bell fs-5"></i>
-            </button>
-            <img src="{{ asset('images/user.png') }}" class="rounded-circle" width="40" alt="User">
-        </div>
-    </div>
 
     <!-- Stock Adjustment Form -->
     <div class="bg-white p-4 rounded shadow-sm">
@@ -93,7 +76,7 @@
 
             <!-- Submit + Cancel Buttons -->
             <div class="d-flex justify-content-end mt-4 gap-2">
-                <a href="{{ route('stock_adjustment') }}" class="btn btn-outline-secondary">
+                <a href="{{ route('stock_adjustment.index') }}" class="btn btn-outline-secondary">
                     Cancel
                 </a>
                 <button type="submit" class="btn btn-primary">

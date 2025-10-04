@@ -3,28 +3,11 @@
 @section('content')
 <div class="col-md-12 p-4 bg-light">
 
-   <!-- Top Bar -->
-    <div class="d-flex justify-content-between align-items-center topbar mb-3">
-        <!-- Search -->
-        <form action="#" method="GET" class="d-flex w-50">
-            <input class="form-control me-2" type="search" name="query" placeholder="Search">
-            <button class="btn btn-primary" type="submit">
-                <i class="bi bi-search"></i>
-            </button>
-        </form>
 
-        <!-- Notifications + User -->
-        <div class="d-flex align-items-center">
-            <button class="btn btn-light position-relative me-3">
-                <i class="bi bi-bell fs-5"></i>
-            </button>
-            <img src="{{ asset('images/user.png') }}" class="rounded-circle" width="40" alt="User">
-        </div>
-    </div>
 
     <!-- Action Buttons + Search -->
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="mb-0">Stock Adjustment</h5>
+        <h5 class="mb-0">Stock Out Requests</h5>
         <div class="d-flex align-items-center gap-2">
             <!-- Search Form -->
             <form action="#" method="GET" class="d-flex">
@@ -36,9 +19,9 @@
                 </div>
             </form>
 
-            <!-- Add Adjustment -->
+            <!-- Request Stock Out -->
             <button class="btn btn-primary btn-sm">
-                <i class="bi bi-plus-circle"></i> Add Adjustment
+                <i class="bi bi-plus-circle"></i> Request Stock Out
             </button>
 
             <!-- Filters -->
@@ -53,30 +36,28 @@
         </div>
     </div>
 
-    <!-- Stock Adjustment Table -->
+    <!-- Stock Out Request Table -->
     <div class="bg-white p-3 rounded shadow-sm">
         <div class="table-responsive">
             <table class="table table-hover table-bordered align-middle text-center">
                 <thead class="table-light">
                     <tr>
-                        <th class="fw-bold">ID</th>
-                        <th class="fw-bold">Name</th>
-                        <th class="fw-bold">Adjustment Type</th>
-                        <th class="fw-bold">Current Stock Level</th>
-                        <th class="fw-bold">Date</th>
-                        <th class="fw-bold">Added By</th>
+                        <th class="fw-bold">Job Order ID</th>
+                        <th class="fw-bold">Requested By</th>
+                        <th class="fw-bold">Customer Name</th>
+                        <th class="fw-bold">Purpose</th>
+                        <th class="fw-bold">Due Date</th>
                         <th class="fw-bold">Status</th>
                         <th class="fw-bold">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>1</td>
-                        <td>Mug</td>
-                        <td>Deduction</td>
-                        <td>50</td>
-                        <td>2025-12-03</td>
-                        <td>Mario Maro</td>
+                        <td>JO-001</td>
+                        <td>Alice</td>
+                        <td>Acme Corp</td>
+                        <td>Installation</td>
+                        <td>2025-10-05</td>
                         <td><span class="badge bg-success">Approved</span></td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
@@ -84,39 +65,24 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>2</td>
-                        <td>Fan</td>
-                        <td>Deduction</td>
-                        <td>50</td>
-                        <td>2025-12-03</td>
-                        <td>Mario Maro</td>
-                        <td><span class="badge bg-success">Approved</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
-                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Pillow</td>
-                        <td>Deduction</td>
-                        <td>50</td>
-                        <td>2025-12-03</td>
-                        <td>Mario Maro</td>
-                        <td><span class="badge bg-success">Approved</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
-                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td>ID</td>
-                        <td>Deduction</td>
-                        <td>50</td>
-                        <td>2025-12-03</td>
-                        <td>Mario Maro</td>
+                        <td>JO-002</td>
+                        <td>Bob</td>
+                        <td>Beta Ltd</td>
+                        <td>Repair</td>
+                        <td>2025-10-07</td>
                         <td><span class="badge bg-danger">Rejected</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
+                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>JO-003</td>
+                        <td>Carol</td>
+                        <td>Gamma Inc</td>
+                        <td>Upgrade</td>
+                        <td>2025-10-10</td>
+                        <td><span class="badge bg-warning text-dark">Pending</span></td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
                             <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
@@ -129,7 +95,7 @@
         <!-- Pagination -->
         <div class="d-flex justify-content-between align-items-center mt-3">
             <button class="btn btn-outline-secondary btn-sm">Previous</button>
-            <small>Page 1 of 10</small>
+            <small>Page 1 of 3</small>
             <button class="btn btn-outline-secondary btn-sm">Next</button>
         </div>
     </div>

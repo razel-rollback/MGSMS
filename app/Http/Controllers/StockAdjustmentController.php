@@ -12,7 +12,7 @@ class StockAdjustmentController extends Controller
      */
     public function index()
     {
-        //
+        return view('Stock_adjustment.stock_adjustment-index');
     }
 
     /**
@@ -20,7 +20,7 @@ class StockAdjustmentController extends Controller
      */
     public function create()
     {
-        //
+        return view('Stock_adjustment.stock_adjustment-add');
     }
 
     /**

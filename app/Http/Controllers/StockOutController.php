@@ -12,7 +12,7 @@ class StockOutController extends Controller
      */
     public function index()
     {
-        //
+        return view('Stock_out.stock_out_requested');
     }
 
     /**

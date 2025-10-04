@@ -15,7 +15,6 @@
                         <th>Order Date</th>
                         <th>Delivery Date</th>
                         <th>Total Amount</th>
-                        <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -26,11 +25,12 @@
                         <td>09/11/25</td>
                         <td>09/12/25</td>
                         <td>20,0424</td>
-                        <td><span class="badge bg-success">Received</span></td>
                         <td>
+
                             <a href="#" class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-eye"></i>
                             </a>
+                            <a href="{{ route('delivery.create') }}" class=" btn btn-sm btn-success">Received</a>
                         </td>
                     </tr>
                     <tr>
@@ -39,11 +39,12 @@
                         <td>09/13/25</td>
                         <td>09/14/25</td>
                         <td>23,2213</td>
-                        <td><span class="badge bg-success">Received</span></td>
+
                         <td>
                             <a href="#" class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-eye"></i>
                             </a>
+                            <a href="# " class="btn btn-sm btn-success">Received</a>
                         </td>
                     </tr>
                     <tr>
@@ -52,11 +53,12 @@
                         <td>09/13/25</td>
                         <td>09/14/25</td>
                         <td>21,3232</td>
-                        <td><span class="badge bg-success">Received</span></td>
+
                         <td>
                             <a href="#" class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-eye"></i>
                             </a>
+                            <a href="# " class="btn btn-sm btn-success">Received</a>
                         </td>
                     </tr>
                 </tbody>
