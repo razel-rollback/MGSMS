@@ -12,7 +12,8 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        //
+        $suppliers = Supplier::paginate(10); // Fetch suppliers with pagination
+        return view('Supplier.supplier-index', compact('suppliers'));
     }
 
     /**
@@ -20,7 +21,7 @@ class SupplierController extends Controller
      */
     public function create()
     {
-        //
+        return view('Supplier.supplier-add'); // Show the add supplier form
     }
 
     /**
@@ -28,15 +29,17 @@ class SupplierController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string|max:255',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Supplier $supplier)
-    {
-        //
+        Supplier::create($request->all());
+
+        return redirect()->route('suppliers.index')   
+                         ->with('success', 'Supplier added successfully!');
     }
 
     /**
@@ -44,7 +47,7 @@ class SupplierController extends Controller
      */
     public function edit(Supplier $supplier)
     {
-        //
+        return view('Supplier.supplier-add', compact('supplier')); // Reuse same form for edit
     }
 
     /**
@@ -52,7 +55,17 @@ class SupplierController extends Controller
      */
     public function update(Request $request, Supplier $supplier)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:suppliers,email,' . $supplier->id,
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string|max:255',
+        ]);
+
+        $supplier->update($request->all());
+
+        return redirect()->route('suppliers.index')   
+                         ->with('success', 'Supplier updated successfully!');
     }
 
     /**
@@ -60,6 +73,9 @@ class SupplierController extends Controller
      */
     public function destroy(Supplier $supplier)
     {
-        //
+        $supplier->delete();
+
+        return redirect()->route('suppliers.index')  
+                         ->with('success', 'Supplier deleted successfully!');
     }
 }
