@@ -133,7 +133,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link {{ request()->is('stock_out*') ? 'active' : '' }}">
+                <a href="#" class="nav-link {{ request()->is('stock_in*') ? 'active' : '' }}">
                     <i class="bi bi-box-arrow-up me-2"></i> Stock In
                 </a>
             </li>
@@ -154,12 +154,12 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link {{ request()->is('suppliers*') ? 'active' : '' }}">
+                <a href="{{ route('inventory_items.index') }}" class="nav-link {{ request()->is('suppliers*') ? 'active' : '' }}">
                     <i class="bi bi-people me-2"></i> Items
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link {{ request()->is('suppliers*') ? 'active' : '' }}">
+                <a href="{{ route('suppliers.index') }}" class="nav-link {{ request()->is('suppliers*') ? 'active' : '' }}">
                     <i class="bi bi-people me-2"></i> Suppliers
                 </a>
             </li>
@@ -169,7 +169,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link {{ request()->is('suppliers*') ? 'active' : '' }}">
+                <a href="{{ route('employees.index') }}" class="nav-link {{ request()->is('suppliers*') ? 'active' : '' }}">
                     <i class="bi bi-people me-2"></i> Customer
                 </a>
             </li>
