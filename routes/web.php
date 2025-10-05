@@ -10,7 +10,6 @@ use App\Http\Controllers\StockReportController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\CustomerController;
 
 // Redirect root to dashboard
 Route::get('/', function () {
@@ -51,5 +50,4 @@ Route::resource('suppliers', SupplierController::class);
 
 Route::resource('items', ItemController::class);
 Route::resource('employees', EmployeeController::class);
-Route::resource('customers', CustomerController::class);
  

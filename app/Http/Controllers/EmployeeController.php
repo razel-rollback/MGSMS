@@ -12,7 +12,9 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        //
+        // Show employees ordered by employee_id ascending, paginated
+        $employees = Employee::orderBy('employee_id', 'asc')->paginate(10);
+        return view('Employee.index', compact('employees'));
     }
 
     /**
@@ -20,7 +22,7 @@ class EmployeeController extends Controller
      */
     public function create()
     {
-        //
+        return view('Employee.create');
     }
 
     /**
@@ -28,7 +30,22 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'first_name'  => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'last_name'   => 'required|string|max:255',
+            'phone'       => 'nullable|string|max:20',
+            'email'       => 'required|email|unique:employees,email',
+            'is_active'   => 'nullable|boolean',
+        ]);
+
+        $validated['is_active'] = $request->has('is_active')
+            ? $request->boolean('is_active')
+            : true;
+
+        Employee::create($validated);
+
+        return redirect()->route('employees.index')->with('success', 'Employee added successfully.');
     }
 
     /**
@@ -36,7 +53,7 @@ class EmployeeController extends Controller
      */
     public function show(Employee $employee)
     {
-        //
+        return view('Employee.show', compact('employee'));
     }
 
     /**
@@ -44,7 +61,7 @@ class EmployeeController extends Controller
      */
     public function edit(Employee $employee)
     {
-        //
+        return view('Employee.edit', compact('employee'));
     }
 
     /**
@@ -52,7 +69,22 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, Employee $employee)
     {
-        //
+        $validated = $request->validate([
+            'first_name'  => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'last_name'   => 'required|string|max:255',
+            'phone'       => 'nullable|string|max:20',
+            'email'       => 'required|email|unique:employees,email,' . $employee->employee_id . ',employee_id',
+            'is_active'   => 'nullable|boolean',
+        ]);
+
+        $validated['is_active'] = $request->has('is_active')
+            ? $request->boolean('is_active')
+            : $employee->is_active;
+
+        $employee->update($validated);
+
+        return redirect()->route('employees.index')->with('success', 'Employee updated successfully.');
     }
 
     /**
@@ -60,6 +92,8 @@ class EmployeeController extends Controller
      */
     public function destroy(Employee $employee)
     {
-        //
+        $employee->delete();
+
+        return redirect()->route('employees.index')->with('success', 'Employee deleted successfully.');
     }
 }
