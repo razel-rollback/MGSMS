@@ -14,6 +14,7 @@ class DeliveryItem extends Model
         'delivery_id',
         'item_id',
         'quantity',
+        'unit_price',
         'note',
     ];
 
@@ -21,6 +22,7 @@ class DeliveryItem extends Model
     {
         return [
             'quantity' => 'integer',
+            'unit_price' => 'decimal:2',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
             'deleted_at' => 'datetime',
@@ -40,6 +42,6 @@ class DeliveryItem extends Model
      */
     public function inventoryItem()
     {
-        return $this->belongsTo(IventoryItem::class, 'item_id', 'item_id');
+        return $this->belongsTo(InventoryItem::class, 'item_id', 'item_id');
     }
 }

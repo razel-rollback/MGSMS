@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PurchaseOrder extends Model
 {
+    use HasFactory;
     use SoftDeletes;
 
     protected $primaryKey = 'po_id';
@@ -33,6 +35,52 @@ class PurchaseOrder extends Model
             'updated_at' => 'datetime',
             'deleted_at' => 'datetime',
         ];
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($purchaseOrder) {
+            if (empty($purchaseOrder->po_number)) {
+                $purchaseOrder->po_number = self::generatePoNumber();
+            }
+        });
+    }
+
+    /**
+     * Generate a unique purchase order number
+     * Format: MGS-YYYY-NNNN (e.g., MGS-2024-0001)
+     */
+    public static function generatePoNumber()
+    {
+        $year = now()->year;
+
+        // Get the latest PO number for the current year
+        $latestPo = self::withTrashed()
+            ->where('po_number', 'like', 'PO-MGS-' . $year . '-%')
+            ->orderBy('po_number', 'desc')
+            ->first();
+
+        if ($latestPo) {
+            // Extract the number from the latest PO and increment
+            $lastNumber = (int) substr($latestPo->po_number, -4);
+            $nextNumber = $lastNumber + 1;
+        } else {
+            // First PO of the year
+            $nextNumber = 1;
+        }
+
+        return 'PO-MGS-' . $year . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Get the next PO number without creating a record
+     * Useful for previewing the number before creation
+     */
+    public static function getNextPoNumber()
+    {
+        return self::generatePoNumber();
     }
 
     /**

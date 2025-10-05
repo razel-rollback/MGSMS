@@ -19,6 +19,7 @@ Route::get('/Dashboard', [DashboardController::class, 'index'])->name('dashboard
 
 
 Route::resource('purchase_order', PurchaseOrderController::class);
+Route::get('/purchase_order/next-number', [PurchaseOrderController::class, 'getNextPoNumber'])->name('purchase_order.next_number');
 //Route::get('/Purchase-Order', [PurchaseOrderController::class, 'index'])->name('purchase_order_index');
 //Route::get('/Purchase-Order/create', [PurchaseOrderController::class, 'create'])->name('purchase_order_create');
 

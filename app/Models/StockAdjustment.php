@@ -39,7 +39,7 @@ class StockAdjustment extends Model
      */
     public function inventoryItem()
     {
-        return $this->belongsTo(IventoryItem::class, 'item_id', 'item_id');
+        return $this->belongsTo(InventoryItem::class, 'item_id', 'item_id');
     }
 
     /**

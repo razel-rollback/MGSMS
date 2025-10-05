@@ -18,7 +18,8 @@ return new class extends Migration
             $table->timestamp('order_date')->nullable();
             $table->date('expected_date')->nullable();
             $table->decimal('total_amount', 14, 2)->default(0.00);
-            $table->string('status', 30)->default('draft');
+            $table->enum('status', ['Pending', 'Approved', 'Disapproved'])
+                ->default('Pending');
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('approved_by')->nullable();
             $table->timestamp('approved_at')->nullable();

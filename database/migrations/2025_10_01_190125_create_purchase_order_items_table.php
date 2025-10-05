@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('item_id');
             $table->integer('quantity');
             $table->decimal('unit_price', 12, 2);
-            $table->decimal('subtotal', 14, 2)->storedAs('quantity * unit_price');
+            $table->decimal('subtotal', 14, 2);
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('po_id')->references('po_id')->on('purchase_orders')->onDelete('cascade');

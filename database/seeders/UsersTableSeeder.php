@@ -85,7 +85,7 @@ class UsersTableSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'user_id' => $staffUserId1,
+                'user_id' => $staffUserId2,
                 'first_name' => 'Greg',
                 'middle_name' => 'S',
                 'last_name' => 'Smith',

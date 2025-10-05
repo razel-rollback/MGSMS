@@ -3,16 +3,17 @@
 @section('content')
 <div class="col-md-12 p-4 bg-light">
 
-    <form action="{{ route('purchase_order.store') }}" method="POST" id="purchaseOrderForm">
+    <form action="{{ route('purchase_order.update', $purchaseOrder->po_id) }}" method="POST" id="purchaseOrderForm" data-existing-items="{{ json_encode($purchaseOrder->purchaseOrderItems) }}">
         @csrf
+        @method('PUT')
 
         <!-- ===================== ORDER DETAILS ===================== -->
         <div class="form-section mb-3 p-3 bg-white rounded shadow-sm">
             <div class="d-flex gap-3">
-                <div><a href="{{  route('purchase_order.index')}} " class="btn btn-sm btn-secondary">
+                <div><a href="{{ route('purchase_order.index') }}" class="btn btn-sm btn-secondary">
                         <i class="bi bi-arrow-return-left"></i> BACK</a></div>
                 <div>
-                    <h5 class="mb-3">Order Details</h5>
+                    <h5 class="mb-3">Edit Purchase Order</h5>
                 </div>
             </div>
             @if (session('error'))
@@ -25,7 +26,7 @@
             <div class="row g-3 mt-3">
                 <div class="col-md-3">
                     <label for="po_number" class="form-label">PO Number</label>
-                    <input type="text" name="po_number" id="po_number" class="form-control" placeholder="Auto-generated" readonly value="{{$nextPoNumber}}">
+                    <input type="text" name="po_number" id="po_number" class="form-control" value="{{ $purchaseOrder->po_number }}" readonly>
                 </div>
 
                 <div class="col-md-3">
@@ -33,19 +34,32 @@
                     <select name="supplier_id" id="supplier_id" class="form-select" required>
                         <option value="">Select Supplier</option>
                         @foreach ($suppliers as $supplier)
-                        <option value="{{ $supplier->supplier_id }}">{{ $supplier->name }}</option>
+                        <option value="{{ $supplier->supplier_id }}" {{ $purchaseOrder->supplier_id == $supplier->supplier_id ? 'selected' : '' }}>
+                            {{ $supplier->name }}
+                        </option>
                         @endforeach
                     </select>
                 </div>
 
                 <div class="col-md-3">
                     <label for="order_date" class="form-label">Order Date</label>
-                    <input type="date" name="order_date" id="order_date" class="form-control" value="{{ now()->toDateString() }}" readonly>
+                    <input type="date" name="order_date" id="order_date" class="form-control" value="{{ $purchaseOrder->order_date->toDateString() }}" readonly>
                 </div>
 
                 <div class="col-md-3">
                     <label for="expected_date" class="form-label">Expected Delivery</label>
-                    <input type="date" name="expected_date" id="expected_date" class="form-control" required>
+                    <input type="date" name="expected_date" id="expected_date" class="form-control" value="{{ $purchaseOrder->expected_date->toDateString() }}" required>
+                </div>
+            </div>
+
+            <div class="row g-3 mt-2">
+                <div class="col-md-3">
+                    <label for="status" class="form-label">Status</label>
+                    <input type="text" class="form-control" value="{{ ucfirst($purchaseOrder->status) }}" readonly>
+                </div>
+                <div class="col-md-3">
+                    <label for="total_amount" class="form-label">Total Amount</label>
+                    <input type="text" class="form-control" value="₱{{ number_format($purchaseOrder->total_amount, 2) }}" readonly>
                 </div>
             </div>
 
@@ -93,7 +107,7 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Order Items</h5>
                 <button type="submit" class="btn btn-success btn-sm">
-                    <i class="bi bi-save"></i> Save Purchase Order
+                    <i class="bi bi-save"></i> Update Purchase Order
                 </button>
             </div>
 
@@ -177,6 +191,33 @@
         let total = 0;
         let addedItems = new Set();
 
+        // Pre-populate existing items
+        const existingItems = JSON.parse(form.dataset.existingItems);
+        existingItems.forEach(function(item) {
+            const itemName = item.inventory_item.name;
+            const unit = item.inventory_item.unit;
+            const itemId = item.item_id;
+            const quantity = item.quantity;
+            const price = parseFloat(item.unit_price);
+            const subtotal = parseFloat(item.subtotal);
+
+            total += subtotal;
+            addedItems.add(itemId.toString());
+
+            const rowData = {
+                name: itemName + `<input type="hidden" name="items[${itemId}][item_id]" value="${itemId}">`,
+                unit: unit,
+                quantity: quantity + `<input type="hidden" name="items[${itemId}][quantity]" value="${quantity}">`,
+                price: '₱' + price.toFixed(2) + `<input type="hidden" name="items[${itemId}][unit_price]" value="${price}">`,
+                subtotal: '₱' + subtotal.toFixed(2),
+                action: '<button type="button" class="btn btn-link text-danger p-0 remove-item"><i class="bi bi-trash"></i></button>'
+            };
+
+            table.row.add(rowData).draw(false);
+        });
+
+        totalAmountEl.textContent = '₱' + total.toFixed(2);
+
         // Autofill price
         itemSelect.addEventListener('change', function() {
             const selected = this.options[this.selectedIndex];
@@ -253,7 +294,7 @@
             }
         });
 
-        // ✅ FIX: Handle all paginated rows before submitting
+        // Handle form submission
         form.addEventListener('submit', function(e) {
             const allData = table.rows().data().toArray();
 
@@ -265,7 +306,7 @@
 
             // Clear existing hidden inputs
             form.querySelectorAll('input[type="hidden"]').forEach(el => {
-                if (el.name !== '_token') el.remove();
+                if (el.name !== '_token' && el.name !== '_method') el.remove();
             });
 
             // Append all hidden inputs from every DataTable row

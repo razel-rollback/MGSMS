@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('delivery_id');
             $table->unsignedBigInteger('item_id');
             $table->integer('quantity');
+            $table->decimal('unit_price', 12, 2)->default(0.00);
             $table->string('note', 255)->nullable();
             $table->timestamps();
             $table->softDeletes();
