@@ -17,7 +17,7 @@
     }
 
     .font {
-        font-size: 1.2rem;
+        font-size: 0.85rem;
     }
 
     .sidebar .nav-link {
@@ -144,10 +144,11 @@
             </li>
 
             <li class="nav-item">
-                <a href="{{ route('stock_adjustment.index') }}" class="nav-link {{ request()->is('stock_adjustment*') ? 'active' : '' }}">
+                <a href="{{ route('stock_adjustments.index') }}" class="nav-link {{ request()->is('stock_adjustments*') ? 'active' : '' }}">
                     <i class="bi bi-arrow-repeat me-2"></i> Stock Adjustment
                 </a>
             </li>
+
             <li class="nav-item">
                 <a href="{{ route('stock_reports_index') }}" class="nav-link {{ request()->is('reports*') ? 'active' : '' }}">
                     <i class="bi bi-graph-up me-2"></i> Reports
