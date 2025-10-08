@@ -46,6 +46,9 @@
                 <div class="col-md-3">
                     <label for="expected_date" class="form-label">Expected Delivery</label>
                     <input type="date" name="expected_date" id="expected_date" class="form-control" required>
+                    @error('expected_date')
+                    <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
             </div>
 

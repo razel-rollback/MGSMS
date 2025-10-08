@@ -10,6 +10,8 @@ use App\Http\Controllers\StockReportController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\InventoryItemController;
+use App\Http\Controllers\StockInRequestController;
+use App\Models\StockInRequest;
 
 // Redirect root to dashboard
 Route::get('/', function () {
@@ -28,10 +30,16 @@ Route::get('/purchase_order/next-number', [PurchaseOrderController::class, 'getN
 
 
 Route::resource('delivery', DeliveryController::class);
+Route::get('/Delivery/Receive', [DeliveryController::class, 'receive'])->name('delivery.receive');
+Route::get('/delivery/modal/{id}', [DeliveryController::class, 'deliveryModal'])->name('delivery.modal');
+Route::get('/modal/{id}', [PurchaseOrderController::class, 'mod']);
+
+
 //Route::get('/Delivery', [DeliveryController::class, 'index'])->name('delivery_index');
 //Route::get('/Delivery/create', [DeliveryController::class, 'create'])->name('delivery_create');
 
-//Route::resource('stock_in', StockInController::class);
+Route::resource('stock_in', StockInRequestController::class);
+
 //Route::get('/Stock-In', [StockInController::class, 'index'])->name('stock_in_index');
 //Route::get('/Stock-In/create', [StockInController::class, 'create'])->name('stock_in_create');
 

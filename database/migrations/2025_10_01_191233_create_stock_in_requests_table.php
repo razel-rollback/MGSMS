@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('delivery_id')->nullable();
             $table->unsignedBigInteger('requested_by');
             $table->timestamp('requested_at')->useCurrent();
-            $table->string('status', 30)->default('pending');
+            $table->string('status', 30)->default('Pending');
             $table->unsignedBigInteger('approved_by')->nullable();
             $table->timestamp('approved_at')->nullable();
             $table->string('note', 255)->nullable();

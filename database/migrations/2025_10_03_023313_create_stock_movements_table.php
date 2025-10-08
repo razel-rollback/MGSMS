@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('stock_movements', function (Blueprint $table) {
             $table->id('movement_id');
             $table->unsignedBigInteger('item_id');
-            $table->string('movement_type', 20);
+            $table->enum('movement_type', ['in', 'out', 'adjustment']);
             $table->string('reference_type', 60);
             $table->unsignedBigInteger('reference_id');
             $table->integer('quantity');

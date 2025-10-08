@@ -20,6 +20,8 @@ return new class extends Migration
             $table->decimal('total_amount', 14, 2)->default(0.00);
             $table->enum('status', ['Pending', 'Approved', 'Disapproved'])
                 ->default('Pending');
+            $table->enum('delivery_status', ['Not Delivered', 'Partially Delivered', 'Fully Delivered'])
+                ->default('Not Delivered');
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('approved_by')->nullable();
             $table->timestamp('approved_at')->nullable();

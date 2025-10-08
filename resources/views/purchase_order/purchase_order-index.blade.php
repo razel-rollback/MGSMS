@@ -4,6 +4,19 @@
 <div class="col-md-12 p-4 bg-light">
 
     <!-- Purchase Orders -->
+    @session('success')
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    @endsession
+    @session('error')
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    @endsession
+
     <div class="card shadow-sm">
         <!-- Header -->
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
@@ -59,22 +72,25 @@
                                 $badgeClass = match($po->status) {
                                 'Approved' => 'bg-success',
                                 'Pending' => 'bg-warning text-dark',
-                                'Disapprove' => 'bg-danger',
+                                'Disapproved' => 'bg-danger',
                                 default => 'bg-secondary'
                                 };
                                 @endphp
                                 <span class="badge {{ $badgeClass }}">{{ ucfirst($po->status) }}</span>
                             </td>
-                            <td>
-                                <a href="javascript:void(0)" class="text-primary me-2 viewOrderBtn" data-id="{{ $po->po_id }}" title="View">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-
-                                <form action="{{ route('purchase_order.destroy', $po->po_id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-link text-danger p-0" title="Delete"><i class="bi bi-trash"></i></button>
-                                </form>
+                            <td class="d-flex gap-2">
+                                <div>
+                                    <a href="javascript:void(0)" class="viewOrderBtn" data-id="{{ $po->po_id }}" title="View">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </div>
+                                <div>
+                                    <form action="{{ route('purchase_order.destroy', $po->po_id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-link text-danger p-0" title="Delete"><i class="bi bi-trash"></i></button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         @empty
@@ -96,14 +112,18 @@
 
                             <div class="modal-body">
                                 <!-- Order Info -->
-                                <div id="orderInfo" class="mb-3">
+                                <div id="orderInfo" class=" row mb-3">
 
-                                    <p><strong>Purchase Order Number:</strong> <span id="po_number"></span></p>
-                                    <p><strong>Supplier:</strong> <span id="supplier_name"></span></p>
-                                    <p><strong>Order Date:</strong> <span id="order_date"></span></p>
-                                    <p><strong>Expected Date:</strong> <span id="expected_date"></span></p>
-                                    <p><strong>Total Amount:</strong> ₱<span id="total_amount"></span></p>
-                                    <p><strong>Status:</strong> <span id="status" class="badge bg-warning text-dark"></span></p>
+                                    <div class="col">
+                                        <p><strong>Purchase Order Number:</strong> <span id="po_number"></span></p>
+                                        <p><strong>Supplier:</strong> <span id="supplier_name"></span></p>
+                                        <p><strong>Order Date:</strong> <span id="order_date"></span></p>
+                                    </div>
+                                    <div class="col">
+                                        <p><strong>Expected Date:</strong> <span id="expected_date"></span></p>
+                                        <p><strong>Total Amount:</strong> ₱<span id="total_amount"></span></p>
+                                        <p><strong>Status:</strong> <span id="status" class="badge bg-warning text-dark"></span></p>
+                                    </div>
                                 </div>
 
                                 <hr>
@@ -130,7 +150,7 @@
                                 <form id="editForm" method="GET" class="my-0 py-0 px-0 mx-0">
                                     <input type="hidden" id="po_id_input" name="po_id">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-warning mt-2">
+                                    <button type="submit" class="btn btn-warning">
                                         <i class="bi bi-pencil-square"></i> Edit
                                     </button>
                                 </form>

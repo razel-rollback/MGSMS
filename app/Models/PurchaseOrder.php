@@ -19,6 +19,7 @@ class PurchaseOrder extends Model
         'expected_date',
         'total_amount',
         'status',
+        'delivery_status',
         'created_by',
         'approved_by',
         'approved_at',

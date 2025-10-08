@@ -1,0 +1,135 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="col-md-10 mx-auto bg-light p-4 rounded shadow-sm">
+    <h4 class="mb-3">Create Stock-In</h4>
+
+    <form action="{{ route('stock_in.store') }}" method="POST" id="stockInForm">
+        @csrf
+
+        <!-- Optional PO / DR -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label>Delivery (optional)</label>
+                <select name="delivery_id" class="form-control">
+                    <option value="">-- None --</option>
+                    @foreach($deliveries as $delivery)
+                    <option value="{{ $delivery->delivery_id }}">{{ $delivery->delivery_receipt }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="mb-3">
+            <label>Note / Remarks</label>
+            <textarea name="note" class="form-control" placeholder="Place notes"></textarea>
+        </div>
+
+        <!-- Item Input Fields -->
+        <div class="row mb-3 g-2 align-items-end">
+            <div class="col-md-6">
+                <label>Item</label>
+                <select id="itemSelect" class="form-control">
+                    <option value="">-- Select Item --</option>
+                    @foreach($items as $item)
+                    <option value="{{ $item->item_id }}">{{ $item->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label>Quantity</label>
+                <input type="number" id="itemQty" class="form-control" min="1">
+            </div>
+            <div class="col-md-2">
+                <label>Unit Price</label>
+                <input type="number" id="itemPrice" class="form-control" min="0" step="0.01">
+            </div>
+            <div class="col-md-2 text-end">
+                <button type="button" class="btn btn-success w-100" id="addItemRow">+ Add Item</button>
+            </div>
+        </div>
+
+        <!-- Stock In Items Table -->
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Stock-In Items</span>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-bordered mb-0" id="stockItemsTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Item</th>
+                            <th width="15%">Quantity</th>
+                            <th width="20%">Unit Price</th>
+                            <th width="5%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic rows go here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="text-end">
+            <button type="submit" class="btn btn-primary">Save Stock-In</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let rowIndex = 0;
+        const tableBody = document.querySelector('#stockItemsTable tbody');
+
+        // Add item to table
+        document.getElementById('addItemRow').addEventListener('click', function() {
+            const itemSelect = document.getElementById('itemSelect');
+            const itemId = itemSelect.value;
+            const itemName = itemSelect.options[itemSelect.selectedIndex]?.text || '';
+            const quantity = document.getElementById('itemQty').value;
+            const price = document.getElementById('itemPrice').value;
+
+            if (!itemId || !quantity || !price) {
+                alert('Please fill out all item fields before adding.');
+                return;
+            }
+
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+            <td>
+                ${itemName}
+                <input type="hidden" name="items[${rowIndex}][item_id]" value="${itemId}">
+            </td>
+            <td>
+                ${quantity}
+                <input type="hidden" name="items[${rowIndex}][quantity]" value="${quantity}">
+            </td>
+            <td>
+                ₱${parseFloat(price).toFixed(2)}
+                <input type="hidden" name="items[${rowIndex}][unit_price]" value="${price}">
+            </td>
+            <td class="text-center">
+                <button type="button" class="btn btn-danger btn-sm removeRow">✕</button>
+            </td>
+        `;
+
+            tableBody.appendChild(newRow);
+            rowIndex++;
+
+            // Clear inputs
+            itemSelect.value = '';
+            document.getElementById('itemQty').value = '';
+            document.getElementById('itemPrice').value = '';
+        });
+
+        // Remove row
+        document.getElementById('stockItemsTable').addEventListener('click', function(e) {
+            if (e.target.classList.contains('removeRow')) {
+                e.target.closest('tr').remove();
+            }
+        });
+    });
+</script>
+@endsection

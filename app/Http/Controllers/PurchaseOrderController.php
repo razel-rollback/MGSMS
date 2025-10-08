@@ -117,6 +117,10 @@ class PurchaseOrderController extends Controller
     public function edit($id)
     {
         $purchaseOrder = PurchaseOrder::with(['supplier', 'purchaseOrderItems.inventoryItem'])->findOrFail($id);
+        if ($purchaseOrder->status == 'Approved') {
+            return back()->with('error', 'Cannot edit an approved purchase order.');
+        }
+
         $suppliers = Supplier::all();
         $items = InventoryItem::all();
 
@@ -190,6 +194,13 @@ class PurchaseOrderController extends Controller
         }
     }
 
+    public function mod($id)
+    {
+        $purchaseOrder = PurchaseOrder::with(['supplier', 'purchaseOrderItems.inventoryItem'])
+            ->findOrFail($id);
+
+        return view('purchase_order.purchase_order-approve', compact('purchaseOrder'));
+    }
     public function destroy($id)
     {
         try {

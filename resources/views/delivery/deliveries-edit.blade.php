@@ -3,9 +3,21 @@
 @section('content')
 <div class="col-md-12 p-4 bg-light">
 
-    <form action="{{ route('delivery.store') }}" method="POST" id="deliveryForm">
+    <form action="{{ route('delivery.update', $delivery->delivery_id) }}"
+        method="POST"
+        id="deliveryEditForm"
+        data-existing-items='@json($existingItems)'>
         @csrf
-        <!-- ===================== DELIVERY DETAILS ===================== -->
+        @method('PUT')
+
+        @if($errors->any())
+        @foreach ($errors->all() as $error)
+        <div>{{ $error }}</div>
+        @endforeach
+        @endif
+
+
+        <!-- ===================== PURCHASE ORDER SUMMARY ===================== -->
         <div class="form-section mb-3 p-3 bg-white rounded shadow-sm">
             <div class="d-flex gap-3">
                 <div><a href="{{ route('delivery.index') }}" class="btn btn-sm btn-secondary">
@@ -13,17 +25,17 @@
                 <div>
                     <h5 class="mb-3">Delivery Details</h5>
                 </div>
-                @if($errors->any())
-                @foreach ($errors->all() as $error)
-                <div>{{ $error }}</div>
-                @endforeach
-                @endif
             </div>
-            @if (session('error'))
+            @session('error')
             <div class="alert alert-danger">
                 {{ session('error') }}
             </div>
-            @endif
+            @endsession
+            @session('success')
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+            @endsession
             <!-- ===================== PURCHASE ORDER SUMMARY ===================== -->
 
             <div class="row g-3 mt-3">
@@ -36,7 +48,7 @@
                         <ul class="row list-unstyled mb-3">
                             <div class="col">
                                 <li><strong>PO Number:</strong> {{ $purchaseOrder->po_number }}</li>
-                                <li><strong>Supplier:</strong> {{ $purchaseOrder->supplier->name ?? 'N/A' }}</li>
+                                <li><strong>Supplier:</strong> {{ $purchaseOrder->supplier->supplier_name ?? 'N/A' }}</li>
                                 <li><strong>Order Date:</strong> {{ \Carbon\Carbon::parse($purchaseOrder->order_date)->format('F d, Y') }}</li>
                             </div>
                             <div class="col">
@@ -77,7 +89,9 @@
                     <div class="row">
                         <div class="col">
                             <label for="delivery_receipt" class="form-label">Delivery Receipt</label>
-                            <input type="text" name="delivery_receipt" id="delivery_receipt" class="form-control" placeholder="Enter delivery receipt number" required>
+                            <input type="text" name="delivery_receipt" id="delivery_receipt"
+                                class="form-control" value="{{ $delivery->delivery_receipt }}" readonly>
+
                         </div>
 
                         <div class="col">
@@ -97,9 +111,9 @@
                             <label for="delivery_status" class="form-label">Delivery Status</label>
                             <select name="delivery_status" id="delivery_status" class="form-select" required>
                                 <option value="">Select Status</option>
-                                <option value="Not Delivered">Not Delivered</option>
-                                <option value="Partially Delivered">Partially Delivered</option>
-                                <option value="Fully Delivered">Fully Delivered</option>
+                                <option value="Not Delivered" {{ $delivery->purchaseOrder->delivery_status == 'Not Delivered' ? 'selected' : '' }}>Not Delivered</option>
+                                <option value="Partially Delivered" {{ $delivery->purchaseOrder->delivery_status == 'Partially Delivered' ? 'selected' : '' }}>Partially Delivered</option>
+                                <option value="Fully Delivered" {{ $delivery->purchaseOrder->delivery_status == 'Fully Delivered' ? 'selected' : '' }}>Fully Delivered</option>
                             </select>
                         </div>
                     </div>
@@ -181,8 +195,8 @@
         </div>
     </form>
 </div>
-
 @endsection
+
 
 @push('styles')
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
@@ -192,157 +206,138 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('deliveryForm');
+    $(document).ready(function() {
+        let existingItems = $('#deliveryEditForm').data('existing-items');
+        const tableBody = $('#itemsTable tbody');
+        const totalAmountEl = $('#totalAmount');
 
-        const table = $('#itemsTable').DataTable({
-            paging: true,
-            searching: false,
-            ordering: false,
-            pageLength: 5,
-            lengthChange: false,
-            autoWidth: false,
-            columns: [{
-                    data: 'name'
-                },
-                {
-                    data: 'ordered_qty'
-                },
-                {
-                    data: 'quantity'
-                },
-                {
-                    data: 'price'
-                },
-                {
-                    data: 'subtotal'
-                },
-                {
-                    data: 'action'
-                }
-            ]
-        });
-
-        const itemSelect = document.getElementById('item_id');
-        const unitPriceInput = document.getElementById('unit_price');
-        const qtyInput = document.getElementById('quantity');
-        const addItemBtn = document.getElementById('addItemBtn');
-        const totalAmountEl = document.getElementById('totalAmount');
-        const itemError = document.getElementById('itemError');
-
-        let total = 0;
-        let addedItems = new Set();
-
-        // Autofill price and set max quantity
-        itemSelect.addEventListener('change', function() {
-            const selected = this.options[this.selectedIndex];
-            const orderedQty = parseInt(selected.dataset.quantity) || 0;
-            unitPriceInput.value = ''; // You might want to get this from the purchase order
-            qtyInput.max = orderedQty;
-            qtyInput.value = Math.min(1, orderedQty);
-            hideError();
-        });
-
-        qtyInput.addEventListener('input', hideError);
-
-        function showError(msg) {
-            itemError.textContent = msg;
-            itemError.style.display = 'block';
+        // ========================
+        // LOAD EXISTING ITEMS
+        // ========================
+        if (existingItems && existingItems.length > 0) {
+            existingItems.forEach(item => {
+                let row = `
+            <tr data-id="${item.item_id}" data-di-id="${item.di_id ?? ''}">
+                <td>${item.item_name}</td>
+                <td>${item.ordered_quantity ?? ''}</td>
+                <td>${item.quantity}</td>
+                <td>₱${parseFloat(item.unit_price).toFixed(2)}</td>
+                <td>₱${(item.quantity * item.unit_price).toFixed(2)}</td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm remove-item" 
+                        data-di-id="${item.di_id ?? ''}">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+                <input type="hidden" name="items[${item.item_id}][item_id]" value="${item.item_id}">
+                <input type="hidden" name="items[${item.item_id}][quantity]" value="${item.quantity}">
+                <input type="hidden" name="items[${item.item_id}][unit_price]" value="${item.unit_price}">
+            </tr>`;
+                tableBody.append(row);
+            });
+            updateTotal();
         }
 
-        function hideError() {
-            itemError.style.display = 'none';
-        }
+        // ========================
+        // ADD ITEM TO TABLE
+        // ========================
+        $('#addItemBtn').on('click', function() {
+            const itemSelect = $('#item_id');
+            const itemId = itemSelect.val();
+            const itemName = itemSelect.find('option:selected').text().split('(Ordered')[0].trim();
+            const orderedQty = itemSelect.find('option:selected').data('quantity');
+            const quantity = parseFloat($('#quantity').val());
+            const unitPrice = parseFloat($('#unit_price').val());
+            const errorDiv = $('#itemError');
 
-        // Add item
-        addItemBtn.addEventListener('click', function() {
-            const selected = itemSelect.options[itemSelect.selectedIndex];
-            const itemId = selected.value;
-            const itemName = selected.text.split(' (Ordered:')[0]; // Remove the ordered quantity part
-            const orderedQty = parseInt(selected.dataset.quantity) || 0;
-            const price = parseFloat(unitPriceInput.value) || 0;
-            const qty = parseInt(qtyInput.value) || 0;
+            // Validate inputs
+            if (!itemId || !quantity || !unitPrice) {
+                errorDiv.text('Please select an item, enter quantity, and unit price.').show();
+                return;
+            }
 
-            if (!itemId) return showError('Please select an item.');
-            if (qty <= 0) return showError('Please enter a valid quantity.');
-            if (qty > orderedQty) return showError('Delivered quantity cannot exceed ordered quantity.');
-            if (addedItems.has(itemId)) return showError('This item has already been added.');
+            // Prevent duplicate items
+            if (tableBody.find(`tr[data-id="${itemId}"]`).length > 0) {
+                errorDiv.text('This item is already added.').show();
+                return;
+            }
 
-            const subtotal = qty * price;
-            total += subtotal;
+            errorDiv.hide();
 
-            addedItems.add(itemId);
+            const subtotal = quantity * unitPrice;
+            const newRow = `
+        <tr data-id="${itemId}">
+            <td>${itemName}</td>
+            <td>${orderedQty.toString()}</td>
+            <td>${quantity}</td>
+            <td>₱${unitPrice.toFixed(2)}</td>
+            <td>₱${subtotal.toFixed(2)}</td>
+            <td>
+                <button type="button" class="btn btn-danger btn-sm remove-item">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+            <input type="hidden" name="items[${itemId}][item_id]" value="${itemId}">
+            <input type="hidden" name="items[${itemId}][quantity]" value="${quantity}">
+            <input type="hidden" name="items[${itemId}][unit_price]" value="${unitPrice}">
+        </tr>`;
 
-            const rowData = {
-                name: itemName + `<input type="hidden" name="items[${itemId}][item_id]" value="${itemId}">`,
-                ordered_qty: orderedQty,
-                quantity: qty + `<input type="hidden" name="items[${itemId}][quantity]" value="${qty}">`,
-                price: '₱' + price.toFixed(2) + `<input type="hidden" name="items[${itemId}][unit_price]" value="${price}">`,
-                subtotal: '₱' + subtotal.toFixed(2),
-                action: '<button type="button" class="btn btn-link text-danger p-0 remove-item"><i class="bi bi-trash"></i></button>'
-            };
+            tableBody.append(newRow);
+            updateTotal();
 
-            table.row.add(rowData).draw(false);
-            totalAmountEl.textContent = '₱' + total.toFixed(2);
-
-            // Reset inputs
-            itemSelect.value = '';
-            unitPriceInput.value = '';
-            qtyInput.value = '1';
-            qtyInput.max = '';
-            hideError();
+            // Reset fields
+            itemSelect.val('');
+            $('#quantity').val('1');
+            $('#unit_price').val('');
         });
 
-        // Remove item
-        $('#itemsTable tbody').on('click', '.remove-item', function() {
+        // ========================
+        // DELETE ITEM
+        // ========================
+        $(document).on('click', '.remove-item', function() {
             const row = $(this).closest('tr');
-            const rowData = table.row(row).data();
+            const diId = $(this).data('di-id');
 
-            if (rowData) {
-                const parser = new DOMParser();
-                const nameInput = parser.parseFromString(rowData.name, 'text/html').querySelector('input');
-                const itemId = nameInput?.value;
+            if (!diId) {
+                row.remove();
+                updateTotal();
+                return;
+            }
 
-                addedItems.delete(itemId);
-
-                const subtotalText = $(row).find('td:eq(4)').text().replace('₱', '');
-                total -= parseFloat(subtotalText) || 0;
-                totalAmountEl.textContent = '₱' + total.toFixed(2);
-
-                table.row(row).remove().draw();
+            if (confirm('Are you sure you want to delete this delivery item?')) {
+                $.ajax({
+                    url: `/delivery-item/${diId}`,
+                    method: 'DELETE',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            row.remove();
+                            updateTotal();
+                        }
+                    },
+                    error: function() {
+                        alert('Error deleting item. Please try again.');
+                    }
+                });
             }
         });
 
-        // Handle form submission
-        form.addEventListener('submit', function(e) {
-            const allData = table.rows().data().toArray();
-
-            if (allData.length === 0) {
-                e.preventDefault();
-                alert('Please add at least one item.');
-                return false;
-            }
-
-            // Clear existing hidden inputs
-            form.querySelectorAll('input[type="hidden"]').forEach(el => {
-                if (el.name !== '_token' && !el.name.includes('po_id')) el.remove();
+        // ========================
+        // UPDATE TOTAL
+        // ========================
+        function updateTotal() {
+            let total = 0;
+            $('#itemsTable tbody tr').each(function() {
+                const subtotalText = $(this).find('td:nth-child(5)').text().replace(/[₱,]/g, '');
+                total += parseFloat(subtotalText) || 0;
             });
-
-            // Append all hidden inputs from every DataTable row
-            allData.forEach(row => {
-                const parser = new DOMParser();
-                const nameInput = parser.parseFromString(row.name, 'text/html').querySelector('input');
-                const qtyInput = parser.parseFromString(row.quantity, 'text/html').querySelector('input');
-                const priceInput = parser.parseFromString(row.price, 'text/html').querySelector('input');
-
-                if (nameInput) form.appendChild(nameInput);
-                if (qtyInput) form.appendChild(qtyInput);
-                if (priceInput) form.appendChild(priceInput);
-            });
-        });
+            totalAmountEl.text(`₱${total.toFixed(2)}`);
+        }
     });
 </script>
+
 
 @endpush
