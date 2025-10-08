@@ -7,6 +7,9 @@ use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\StockAdjustmentController;
 use App\Http\Controllers\StockOutController;
 use App\Http\Controllers\StockReportController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\ItemController;
+use App\Http\Controllers\EmployeeController;
 
 // Redirect root to dashboard
 Route::get('/', function () {
@@ -43,3 +46,9 @@ Route::resource('stock_adjustment', StockAdjustmentController::class);
 //Route::resource('stock_report', StockReportController::class);
 Route::get('/Stock-Report', [StockReportController::class, 'index'])->name('stock_reports_index');
 Route::get('/Stock-Report/Generate', [StockReportController::class, 'generate'])->name('stock_reports_generate');
+
+Route::resource('suppliers', SupplierController::class);
+
+Route::resource('items', ItemController::class);
+Route::resource('employees', EmployeeController::class);
+ 
