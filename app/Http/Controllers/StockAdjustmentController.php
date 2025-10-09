@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\StockAdjustment;
+use App\Models\InventoryItem;
+use App\Models\Employee;
 use Illuminate\Http\Request;
 
 class StockAdjustmentController extends Controller
@@ -12,15 +14,23 @@ class StockAdjustmentController extends Controller
      */
     public function index()
     {
-        return view('Stock_adjustment.stock_adjustment-index');
+        $adjustments = StockAdjustment::paginate(10);
+        $items = InventoryItem::all();
+        $employees = Employee::all();
+
+        return view('Stock_adjustment.stock_adjustment-index', compact('adjustments', 'items', 'employees'));
     }
+
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        return view('Stock_adjustment.stock_adjustment-add');
+        $items = InventoryItem::all();
+        $employees = Employee::all();
+
+        return view('Stock_adjustment.stock_adjustment-add', compact('items', 'employees'));
     }
 
     /**
@@ -28,15 +38,28 @@ class StockAdjustmentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'item_id'         => 'required|exists:inventory_items,item_id',
+            'requested_by'    => 'required|exists:employees,employee_id',
+            'adjustment_type' => 'required|string|max:30',
+            'quantity'        => 'required|integer',
+            'reason'          => 'required|string|max:255',
+        ]);
+
+        StockAdjustment::create($validated);
+
+        return redirect()->route('stock_adjustments.index')
+                         ->with('success', 'Stock adjustment created successfully.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(StockAdjustment $stockAdjustment)
+    public function show($id)
     {
-        //
+        $adjustment = StockAdjustment::with(['inventoryItem', 'requester'])->findOrFail($id);
+
+        return view('Stock_adjustment.stock_adjustment_show', compact('adjustment'));
     }
 
     /**
@@ -44,7 +67,10 @@ class StockAdjustmentController extends Controller
      */
     public function edit(StockAdjustment $stockAdjustment)
     {
-        //
+        $items = InventoryItem::all();
+        $employees = Employee::all();
+
+        return view('Stock_adjustment.stock_adjustment-edit', compact('stockAdjustment', 'items', 'employees'));
     }
 
     /**
@@ -52,7 +78,19 @@ class StockAdjustmentController extends Controller
      */
     public function update(Request $request, StockAdjustment $stockAdjustment)
     {
-        //
+        $validated = $request->validate([
+            'item_id'         => 'required|exists:inventory_items,item_id',
+            'requested_by'    => 'required|exists:employees,employee_id',
+            'adjustment_type' => 'required|string|max:30',
+            'quantity'        => 'required|integer',
+            'reason'          => 'required|string|max:255',
+            'status'          => 'required|string|max:30',
+        ]);
+
+        $stockAdjustment->update($validated);
+
+        return redirect()->route('stock_adjustments.index')
+                         ->with('success', 'Stock adjustment updated successfully.');
     }
 
     /**
@@ -60,6 +98,47 @@ class StockAdjustmentController extends Controller
      */
     public function destroy(StockAdjustment $stockAdjustment)
     {
-        //
+        $stockAdjustment->delete();
+
+        return redirect()->route('stock_adjustments.index')
+                         ->with('success', 'Stock adjustment deleted successfully.');
+    }
+
+    public function pending()
+    {
+        $adjustments = StockAdjustment::with(['inventoryItem','requester'])
+                        ->where('status', 'pending')
+                        ->get();
+
+        return view('Stock_adjustment.stock_adjustment-pending', compact('adjustments'));
+    }
+
+    public function approve(StockAdjustment $adjustment)
+    {
+        $adjustment->update([
+            'status' => 'approved',
+            'approved_by' => auth()->id(),
+            'approved_at' => now(),
+        ]);
+
+        // Update stock count
+        if ($adjustment->adjustment_type === 'increase') {
+            $adjustment->inventoryItem->increment('stock', $adjustment->quantity);
+        } elseif ($adjustment->adjustment_type === 'decrease') {
+            $adjustment->inventoryItem->decrement('stock', $adjustment->quantity);
+        }
+
+        return back()->with('success', 'Adjustment approved and stock updated.');
+    }
+
+    public function reject(StockAdjustment $adjustment)
+    {
+        $adjustment->update([
+            'status' => 'rejected',
+            'approved_by' => auth()->id(),
+            'approved_at' => now(),
+        ]);
+
+        return back()->with('success', 'Adjustment rejected.');
     }
 }
