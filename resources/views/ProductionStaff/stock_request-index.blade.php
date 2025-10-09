@@ -1,61 +1,67 @@
-@extends('layouts.app')
+@extends('layouts.production_app')
 
 @section('content')
 <div class="container mt-4">
 
     @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+    <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <h4 class="mb-3">Request Stock Out</h4>
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+        <h5 class="mb-0">My Stock Out Requests</h5>
+        <a href="{{ route('production.create') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Create Request
+        </a>
+    </div>
 
-    <form method="POST" action="{{ route('production.requestStock') }}">
-        @csrf
-        <div class="row mb-3">
-            <div class="col-md-4">
-                <label class="form-label">Select Item</label>
-                <select name="item_id" class="form-select" required>
-                    <option value="" disabled selected>Choose item</option>
-                    @foreach($items as $item)
-                        <option value="{{ $item->id }}">{{ $item->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">Quantity</label>
-                <input type="number" name="quantity" class="form-control" min="1" required>
-            </div>
-            <div class="col-md-3 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary">Request</button>
-            </div>
-        </div>
-    </form>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Items</th>
+                    <th>Total Quantity</th>
+                    <th>Status</th>
+                    <th>Requested At</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($requests as $request)
+                <tr>
+                    <td>
+                        @foreach($request->stockOutItems as $item)
+                        <div>- {{ $item->inventoryItem->name ?? 'N/A' }} ({{ $item->quantity }})</div>
+                        @endforeach
+                    </td>
+                    <td>{{ $request->stockOutItems->sum('quantity') }}</td>
+                    <td>
+                        <span class="badge 
+                                @if($request->status == 'Approved') bg-success
+                                @elseif($request->status == 'Pending') bg-warning text-dark
+                                @elseif($request->status == 'Disaaprove') bg-danger
+                                @else bg-secondary @endif">
+                            {{ ucfirst($request->status) }}
+                        </span>
+                    </td>
+                    <td>{{ $request->created_at?->format('Y-m-d H:i') ?? 'N/A' }}</td>
+                    <td>
+                        <a href="{{ route('production.edit', $request->stock_out_id) }}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </a>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="5" class="text-center">No requests yet</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 
-    <h5 class="mt-4">My Stock Out Requests</h5>
-    <table class="table table-bordered mt-2">
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th>Quantity</th>
-                <th>Status</th>
-                <th>Requested At</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($requests as $request)
-                <tr>
-                    <td>{{ $request->item->name ?? 'N/A' }}</td>
-                    <td>{{ $request->quantity }}</td>
-                    <td>{{ ucfirst($request->status) }}</td>
-                    <td>{{ $request->created_at->format('Y-m-d H:i') }}</td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="4" class="text-center">No requests yet</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+    <div class="d-flex justify-content-center mt-3">
+        {{ $requests->links('pagination::bootstrap-5') }}
+    </div>
 
 </div>
 @endsection

@@ -18,6 +18,9 @@
 
      <!-- Notifications + User -->
      <div class="d-flex align-items-center">
+         <div>
+             <p>{{ Auth::user()->email }}</p>
+         </div>
          <button class="btn btn-light position-relative me-3">
              <i class="bi bi-bell fs-5"></i>
          </button>

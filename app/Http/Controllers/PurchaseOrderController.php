@@ -10,6 +10,8 @@ use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderItem;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Auth;
+
 
 class PurchaseOrderController extends Controller
 {
@@ -74,7 +76,8 @@ class PurchaseOrderController extends Controller
                 'expected_date' => $request->expected_date,
                 'total_amount'  => 0,
                 'status'        => 'Pending',
-                'created_by'    =>  null,
+                'created_by' => auth()->user()->id,
+
             ]);
 
             // Insert items if any

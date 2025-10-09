@@ -3,8 +3,6 @@
 @section('content')
 <div class="col-md-12 p-4 bg-light">
 
-
-
     <!-- Action Buttons + Search -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="mb-0">Stock Out Requests</h5>
@@ -18,11 +16,6 @@
                     </button>
                 </div>
             </form>
-
-            <!-- Request Stock Out -->
-            <button class="btn btn-primary btn-sm">
-                <i class="bi bi-plus-circle"></i> Request Stock Out
-            </button>
 
             <!-- Filters -->
             <button class="btn btn-outline-secondary btn-sm">
@@ -42,52 +35,37 @@
             <table class="table table-hover table-bordered align-middle text-center">
                 <thead class="table-light">
                     <tr>
-                        <th class="fw-bold">Job Order ID</th>
-                        <th class="fw-bold">Requested By</th>
-                        <th class="fw-bold">Customer Name</th>
-                        <th class="fw-bold">Purpose</th>
-                        <th class="fw-bold">Due Date</th>
-                        <th class="fw-bold">Status</th>
-                        <th class="fw-bold">Actions</th>
+                        <th scope="col">Stock Out ID</th>
+                        <th scope="col">Job Order</th>
+                        <th scope="col">Requested By</th>
+                        <th scope="col">Requested At</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Validated By</th>
+                        <th scope="col">Approved By</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @forelse ($stockOutRequests as $request)
                     <tr>
-                        <td>JO-001</td>
-                        <td>Alice</td>
-                        <td>Acme Corp</td>
-                        <td>Installation</td>
-                        <td>2025-10-05</td>
-                        <td><span class="badge bg-success">Approved</span></td>
+                        <td>{{ $request->stock_out_id }}</td>
+                        <td>{{ $request->jobOrder ? $request->jobOrder->job_order_id : 'N/A' }}</td>
+                        <td>{{ $request->requester ? $request->requester->first_name : 'N/A' }}</td>
+                        <td>{{ $request->requested_at->format('Y-m-d H:i:s') }}</td>
+                        <td>{{ $request->status }}</td>
+                        <td>{{ $request->validator ? $request->validator->first_name : 'N/A' }}</td>
+                        <td>{{ $request->approver ? $request->approver->first_name : 'N/A' }}</td>
                         <td>
-                            <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
-                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                            <a href="{{ route('stock.out.requests.show', $request->stock_out_id) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i>
+                            </a>
                         </td>
                     </tr>
+                    @empty
                     <tr>
-                        <td>JO-002</td>
-                        <td>Bob</td>
-                        <td>Beta Ltd</td>
-                        <td>Repair</td>
-                        <td>2025-10-07</td>
-                        <td><span class="badge bg-danger">Rejected</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
-                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
-                        </td>
+                        <td colspan="8">No stock out requests found.</td>
                     </tr>
-                    <tr>
-                        <td>JO-003</td>
-                        <td>Carol</td>
-                        <td>Gamma Inc</td>
-                        <td>Upgrade</td>
-                        <td>2025-10-10</td>
-                        <td><span class="badge bg-warning text-dark">Pending</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
-                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
-                        </td>
-                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -95,7 +73,7 @@
         <!-- Pagination -->
         <div class="d-flex justify-content-between align-items-center mt-3">
             <button class="btn btn-outline-secondary btn-sm">Previous</button>
-            <small>Page 1 of 3</small>
+            <small>Page {{ $stockOutRequests->currentPage() }} of {{ $stockOutRequests->lastPage() }}</small>
             <button class="btn btn-outline-secondary btn-sm">Next</button>
         </div>
     </div>

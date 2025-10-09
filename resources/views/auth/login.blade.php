@@ -44,7 +44,6 @@
     .form-label {
         font-weight: 500;
         margin-bottom: 6px;
-        justify-content: center;
         color: #333;
     }
 
@@ -52,6 +51,15 @@
     .form-select {
         margin-bottom: 16px;
         border-radius: 6px;
+    }
+
+    .form-control.is-invalid {
+        border-color: #dc3545;
+    }
+
+    .invalid-feedback {
+        font-size: 0.875rem;
+        color: #dc3545;
     }
 
     .form-check-label {
@@ -81,6 +89,11 @@
         font-size: 0.95rem;
         color: #007bff;
     }
+
+    .alert {
+        margin-bottom: 20px;
+        border-radius: 6px;
+    }
 </style>
 
 <div class="login-wrapper">
@@ -88,33 +101,60 @@
         <div class="login-logo">
             <img src="{{ asset('images/LOGO.jpg') }}" alt="MGS Logo">
         </div>
-        @if(session('error'))
-        <div class="alert alert-danger mb-3">{{ session('error') }}</div>
-        @endif
 
+        <!-- Session-based error message (e.g., invalid credentials) -->
+        @if (session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+        @endif
 
         <h4>Login to your account</h4>
 
         <form method="POST" action="{{ route('login') }}">
             @csrf
 
+            <!-- Email Field -->
+            <div>
+                <label for="email" class="form-label">Email Address</label>
+                <input
+                    type="email"
+                    name="email"
+                    class="form-control @error('email') is-invalid @enderror"
+                    id="email"
+                    value="{{ old('email') }}"
+                    autofocus>
+                @error('email')
+                <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
 
+            <!-- Password Field -->
+            <div>
+                <label for="password" class="form-label">Password</label>
+                <input
+                    type="password"
+                    name="password"
+                    class="form-control @error('password') is-invalid @enderror"
+                    id="password">
+                @error('password')
+                <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
 
-
-            <label for="email" class="form-label">Email Address</label>
-            <input type="email" name="email" class="form-control" required autofocus>
-
-            <label for="password" class="form-label">Password</label>
-            <input type="password" name="password" class="form-control" required>
-
+            <!-- Remember Me and Forgot Password -->
             <div class="login-actions">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="remember">
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        name="remember"
+                        id="remember"
+                        {{ old('remember') ? 'checked' : '' }}>
                     <label class="form-check-label" for="remember">Keep me logged in</label>
                 </div>
                 <a href="#" class="text-decoration-none">Forgot Password?</a>
             </div>
 
+            <!-- Submit Button -->
             <button type="submit" class="btn btn-primary w-100">Log in</button>
         </form>
     </div>

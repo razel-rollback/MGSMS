@@ -12,7 +12,7 @@ class InventoryItemController extends Controller
      */
     public function index()
     {
-        $items = InventoryItem::all();
+        $items = InventoryItem::paginate(10);
         return view('Item.index', compact('items'));
     }
 
@@ -65,7 +65,6 @@ class InventoryItemController extends Controller
         $validated = $request->validate([
             'name'           => 'required|string|max:150',
             'unit'           => 'required|string|max:50',
-            're_order_stock' => 'required|integer|min:0',
             'current_stock'  => 'required|integer|min:0',
         ]);
 

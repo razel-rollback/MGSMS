@@ -11,10 +11,10 @@
             <label>Item</label>
             <select name="item_id" class="form-control" required>
                 @foreach($items as $item)
-                    <option value="{{ $item->item_id }}" 
-                        {{ $stockAdjustment->item_id == $item->item_id ? 'selected' : '' }}>
-                        {{ $item->name }}
-                    </option>
+                <option value="{{ $item->item_id }}"
+                    {{ $stockAdjustment->item_id == $item->item_id ? 'selected' : '' }}>
+                    {{ $item->name }}
+                </option>
                 @endforeach
             </select>
         </div>
@@ -23,10 +23,10 @@
             <label>Requested By</label>
             <select name="requested_by" class="form-control" required>
                 @foreach($employees as $emp)
-                    <option value="{{ $emp->employee_id }}" 
-                        {{ $stockAdjustment->requested_by == $emp->employee_id ? 'selected' : '' }}>
-                        {{ $emp->name }}
-                    </option>
+                <option value="{{ $emp->employee_id }}"
+                    {{ $stockAdjustment->requested_by == $emp->employee_id ? 'selected' : '' }}>
+                    {{ $emp->name }}
+                </option>
                 @endforeach
             </select>
         </div>
@@ -47,15 +47,6 @@
         <div class="mb-3">
             <label>Reason</label>
             <textarea name="reason" class="form-control" required>{{ $stockAdjustment->reason }}</textarea>
-        </div>
-
-        <div class="mb-3">
-            <label>Status</label>
-            <select name="status" class="form-control" required>
-                <option value="pending" {{ $stockAdjustment->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                <option value="approved" {{ $stockAdjustment->status == 'approved' ? 'selected' : '' }}>Approved</option>
-                <option value="rejected" {{ $stockAdjustment->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
-            </select>
         </div>
 
         <button type="submit" class="btn btn-success">Update</button

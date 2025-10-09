@@ -5,11 +5,8 @@
         min-height: 100vh;
         display: flex;
         flex-direction: column;
-        /* stack items vertically */
         justify-content: space-between;
-        /* push last section to bottom */
         transition: all 0.3s ease-in-out;
-
     }
 
     li {
@@ -98,7 +95,6 @@
         .content-wrapper {
             margin-left: 0 !important;
         }
-
     }
 </style>
 
@@ -115,48 +111,53 @@
         </div>
 
         <ul class="nav flex-column gap-3">
+            @if (auth()->check() && auth()->user()->role && auth()->user()->role->role_name === 'Admin')
             <li class="nav-item">
-                <a href="{{ route('dashboard') }}" class="nav-link {{ request()->is('/') ? 'active' : '' }}">
+
+                <a href="{{ route('pending.requests') }}" class="nav-link {{ request()->is('pending-requests') ? 'active' : '' }}">
+                    <i class="bi-check-circle"></i> Stock Requests
+                </a>
+
+            </li>
+            @endif
+            <li class="nav-item">
+                <a href="{{ route('dashboard') }}" class="nav-link {{ request()->is('Dashboard') ? 'active' : '' }}">
                     <i class="bi bi-speedometer2 me-2"></i> Dashboard
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ route('purchase_order.index') }}"
-                    class="nav-link">
+                <a href="{{ route('purchase_order.index') }}" class="nav-link {{ request()->is('purchase_order*') ? 'active' : '' }}">
                     <i class="bi bi-bag me-2"></i> Purchase Order
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ route('delivery.index') }}"
-                    class="nav-link">
-                    <i class="bi bi-bag me-2"></i> Deliveries
+                <a href="{{ route('delivery.index') }}" class="nav-link {{ request()->is('delivery*') ? 'active' : '' }}">
+                    <i class="bi bi-truck me-2"></i> Deliveries
                 </a>
             </li>
             <li class="nav-item">
                 <a href="{{ route('stock_in.index') }}" class="nav-link {{ request()->is('stock_in*') ? 'active' : '' }}">
-                    <i class="bi bi-box-arrow-up me-2"></i> Stock In
+                    <i class="bi bi-plus-circle me-2"></i> Stock In
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ route('stock_out.index') }}" class="nav-link {{ request()->is('stock_out*') ? 'active' : '' }}">
-                    <i class="bi bi-box-arrow-up me-2"></i> Stock Out
+                <a href="{{ route('stock-out.index') }}" class="nav-link {{ request()->is('stock-out-requests*') ? 'active' : '' }}">
+                    <i class="bi bi-box-arrow-up-right me-2"></i> Stock Out
                 </a>
             </li>
-
             <li class="nav-item">
                 <a href="{{ route('stock_adjustments.index') }}" class="nav-link {{ request()->is('stock_adjustments*') ? 'active' : '' }}">
                     <i class="bi bi-arrow-repeat me-2"></i> Stock Adjustment
                 </a>
             </li>
-
             <li class="nav-item">
-                <a href="{{ route('stock_reports_index') }}" class="nav-link {{ request()->is('reports*') ? 'active' : '' }}">
+                <a href="{{ route('stock_reports_index') }}" class="nav-link {{ request()->is('Stock-Report*') ? 'active' : '' }}">
                     <i class="bi bi-graph-up me-2"></i> Reports
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ route('items.index') }}" class="nav-link {{ request()->is('suppliers*') ? 'active' : '' }}">
-                    <i class="bi bi-people me-2"></i> Items
+                <a href="{{ route('items.index') }}" class="nav-link {{ request()->is('items*') ? 'active' : '' }}">
+                    <i class="bi bi-box-seam me-2"></i> Items
                 </a>
             </li>
             <li class="nav-item">
@@ -165,28 +166,29 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link {{ request()->is('suppliers*') ? 'active' : '' }}">
+                <a href="{{ route('employees.index') }}" class="nav-link {{ request()->is('employees*') ? 'active' : '' }}">
                     <i class="bi bi-people me-2"></i> Employees
                 </a>
             </li>
+            <!-- Placeholder routes (to be implemented) -->
             <li class="nav-item">
-                <a href="{{ route('employees.index') }}" class="nav-link {{ request()->is('suppliers*') ? 'active' : '' }}">
-                    <i class="bi bi-people me-2"></i> Customer
+                <a href="#" class="nav-link {{ request()->is('customers*') ? 'active' : '' }}">
+                    <i class="bi bi-people me-2"></i> Customers
                 </a>
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link {{ request()->is('orders*') ? 'active' : '' }}">
-                    <i class="bi bi-cart me-2"></i> Orders
+                    <i class="bi bi-journal-text me-2"></i> Orders
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link {{ request()->is('orders*') ? 'active' : '' }}">
-                    <i class="bi bi-cart me-2"></i> Product Workflow
+                <a href="#" class="nav-link {{ request()->is('product_workflow*') ? 'active' : '' }}">
+                    <i class="bi bi-activity me-2"></i> Product Workflow
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link {{ request()->is('orders*') ? 'active' : '' }}">
-                    <i class="bi bi-cart me-2"></i> Service
+                <a href="#" class="nav-link {{ request()->is('services*') ? 'active' : '' }}">
+                    <i class="bi bi-tools me-2"></i> Service
                 </a>
             </li>
             <li class="nav-item">
@@ -197,16 +199,25 @@
             <div class="mt-3 mb-5 d-flex flex-column gap-3 font">
                 <hr>
                 <li class="nav-item">
-                    <a href="#" class="nav-link"><i class="bi bi-gear"></i> Settings</a>
+                    <a href="#" class="nav-link {{ request()->is('settings*') ? 'active' : '' }}">
+                        <i class="bi bi-gear"></i> Settings
+                    </a>
                 </li>
-
                 <li class="nav-item">
-                    <a href="#" class="nav-link"><i class="bi bi-box-arrow-right"></i> Log Out</a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="nav-link btn btn-link text-decoration-none">
+                            <i class="bi bi-box-arrow-right"></i> Log Out
+                        </button>
+                    </form>
                 </li>
             </div>
         </ul>
     </div>
-
-    <!-- This part stays at the bottom -->
-
 </div>
+
+<script>
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('show');
+    }
+</script>

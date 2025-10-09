@@ -35,6 +35,7 @@
                         <th>ID</th>
                         <th>Product Name</th>
                         <th>Adjustment Type</th>
+                        <th>Quantity
                         <th>Current Stock Level</th>
                         <th>Date</th>
                         <th>Requested By</th>
@@ -44,114 +45,119 @@
                 </thead>
                 <tbody>
                     @forelse($adjustments as $adjustment)
-                        <tr>
-                            <td>{{ $adjustment->id }}</td>
-                            <td>{{ $adjustment->product_name }}</td>
-                            <td>{{ ucfirst($adjustment->adjustment_type) }}</td>
-                            <td>{{ $adjustment->current_stock }}</td>
-                            <td>{{ $adjustment->created_at->format('d-m-Y') }}</td>
-                            <td>{{ $adjustment->requested_by }}</td>
-                            <td>
-                                @if($adjustment->status === 'Approved')
-                                    <span class="badge bg-success">Approved</span>
-                                @elseif($adjustment->status === 'Rejected')
-                                    <span class="badge bg-danger">Rejected</span>
-                                @else
-                                    <span class="badge bg-warning text-dark">{{ $adjustment->status }}</span>
-                                @endif
-                            </td>
-                            <td class="text-center">
-                                <!-- View button -->
-                                <a href="{{ route('stock_adjustments.show', $adjustment->adjustment_id) }}" class="btn btn-sm btn-outline-secondary">
-                                    <i class="bi bi-eye"></i>
-                                </a>
+                    <tr>
+                        <td>{{ $adjustment->adjustment_id }}</td>
+                        <td>{{ $adjustment->inventoryItem->name }}</td>
+                        <td>{{ ucfirst($adjustment->adjustment_type) }}</td>
+                        <td>{{ ucfirst($adjustment->quantity) }}</td>
+                        <td>{{ $adjustment->inventoryItem->current_stock }}</td>
+                        <td>{{ $adjustment->created_at->format('d-m-Y') }}</td>
+                        <td>{{ $adjustment->requester->first_name }}</td>
+                        <td>
+                            @if($adjustment->status === 'Approved')
+                            <span class="badge bg-success">Approved</span>
+                            @elseif($adjustment->status === 'Disapproved')
+                            <span class="badge bg-danger">Disapproved</span>
+                            @else
+                            <span class="badge bg-warning text-dark">{{ $adjustment->status }}</span>
+                            @endif
+                        </td>
+                        <td class="text-center">
+                            <!-- View button -->
+                            <a href="{{ route('stock_adjustments.show', $adjustment->adjustment_id) }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-eye"></i>
+                            </a>
 
-                                <!-- Edit button triggers modal -->
-                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ $adjustment->adjustment_id }}">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            </td>
+                            <!-- Edit button triggers modal -->
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ $adjustment->adjustment_id }}">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </td>
 
-                            <!-- Modal -->
-                            <div class="modal fade" id="editModal{{ $adjustment->adjustment_id }}" tabindex="-1" aria-labelledby="editModalLabel{{ $adjustment->adjustment_id }}" aria-hidden="true">
-                                <div class="modal-dialog modal-lg">
-                                    <div class="modal-content">
-                                        
-                                        <div class="modal-header text-dark" style="background-color: #b2f0f5;">
-                                            <h5 class="modal-title" id="editModalLabel{{ $adjustment->adjustment_id }}">Edit Stock Adjustment</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <!-- Modal -->
+                        <div class="modal fade" id="editModal{{ $adjustment->adjustment_id }}" tabindex="-1" aria-labelledby="editModalLabel{{ $adjustment->adjustment_id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+
+                                    <div class="modal-header text-dark" style="background-color: #b2f0f5;">
+                                        <h5 class="modal-title" id="editModalLabel{{ $adjustment->adjustment_id }}">Edit Stock Adjustment</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+
+                                    <!-- Pass correct ID to update route -->
+                                    <form action="{{ route('stock_adjustments.update', $adjustment->adjustment_id) }}" method="POST">
+                                        @csrf
+                                        @method('PUT')
+                                        <div class="modal-body">
+
+                                            <div class="mb-3">
+                                                <label>Item</label>
+                                                <select name="item_id" class="form-control" required>
+                                                    @foreach($items as $item)
+                                                    <option value="{{ $item->item_id }}"
+                                                        {{ $adjustment->item_id == $item->item_id ? 'selected' : '' }}>
+                                                        {{ $item->name }}
+                                                    </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label>Requested By</label>
+                                                <select name="requested_by" class="form-control" required>
+                                                    @forelse($employees as $emp)
+                                                    <option value="{{ $emp->employee_id }}"
+                                                        {{ optional($adjustment)->requested_by == $emp->employee_id ? 'selected' : '' }}>
+                                                        {{ $emp->first_name }} {{ $emp->last_name }}
+                                                    </option>
+                                                    @empty
+                                                    <option disabled>No employees found</option>
+                                                    @endforelse
+                                                </select>
+
+
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label>Adjustment Type</label>
+                                                <select name="adjustment_type" class="form-control" required>
+                                                    <option value="increase" {{ $adjustment->adjustment_type == 'increase' ? 'selected' : '' }}>Increase</option>
+                                                    <option value="decrease" {{ $adjustment->adjustment_type == 'decrease' ? 'selected' : '' }}>Decrease</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label>Quantity</label>
+                                                <input type="number" name="quantity" class="form-control" value="{{ $adjustment->quantity }}" required>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label>Reason</label>
+                                                <textarea name="reason" class="form-control" required>{{ $adjustment->reason }}</textarea>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label>Status</label>
+                                                <select name="status" class="form-control" required>
+                                                    <option value="pending" {{ $adjustment->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                                    <option value="approved" {{ $adjustment->status == 'approved' ? 'selected' : '' }}>Approved</option>
+                                                    <option value="rejected" {{ $adjustment->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                                </select>
+                                            </div>
                                         </div>
 
-                                        <!-- Pass correct ID to update route -->
-                                        <form action="{{ route('stock_adjustments.update', $adjustment->adjustment_id) }}" method="POST">
-                                            @csrf
-                                            @method('PUT')
-                                            <div class="modal-body">
-                                                
-                                                <div class="mb-3">
-                                                    <label>Item</label>
-                                                    <select name="item_id" class="form-control" required>
-                                                        @foreach($items as $item)
-                                                            <option value="{{ $item->item_id }}" 
-                                                                {{ $adjustment->item_id == $item->item_id ? 'selected' : '' }}>
-                                                                {{ $item->name }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label>Requested By</label>
-                                                    <select name="requested_by" class="form-control" required>
-                                                        @foreach($employees as $emp)
-                                                            <option value="{{ $emp->employee_id }}" 
-                                                                {{ $adjustment->requested_by == $emp->employee_id ? 'selected' : '' }}>
-                                                                {{ $emp->name }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label>Adjustment Type</label>
-                                                    <select name="adjustment_type" class="form-control" required>
-                                                        <option value="increase" {{ $adjustment->adjustment_type == 'increase' ? 'selected' : '' }}>Increase</option>
-                                                        <option value="decrease" {{ $adjustment->adjustment_type == 'decrease' ? 'selected' : '' }}>Decrease</option>
-                                                    </select>
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label>Quantity</label>
-                                                    <input type="number" name="quantity" class="form-control" value="{{ $adjustment->quantity }}" required>
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label>Reason</label>
-                                                    <textarea name="reason" class="form-control" required>{{ $adjustment->reason }}</textarea>
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label>Status</label>
-                                                    <select name="status" class="form-control" required>
-                                                        <option value="pending" {{ $adjustment->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                                        <option value="approved" {{ $adjustment->status == 'approved' ? 'selected' : '' }}>Approved</option>
-                                                        <option value="rejected" {{ $adjustment->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div class="modal-footer">
-                                                <button type="submit" class="btn btn-success">Update</button>
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                            </div>
-                                        </form>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-success">Update</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
-                    @empty
-                        <tr>
-                            <td colspan="8" class="text-center">No stock adjustments found.</td>
-                        </tr>
+                        @empty
+                    <tr>
+                        <td colspan="8" class="text-center">No stock adjustments found.</td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>
@@ -161,8 +167,8 @@
     <!-- Pagination -->
     <div class="d-flex justify-content-between align-items-center mt-3">
         <button class="btn btn-outline-secondary btn-sm"
-                @if($adjustments->onFirstPage()) disabled @endif
-                onclick="window.location='{{ $adjustments->previousPageUrl() }}'">
+            @if($adjustments->onFirstPage()) disabled @endif
+            onclick="window.location='{{ $adjustments->previousPageUrl() }}'">
             Previous
         </button>
 
@@ -171,73 +177,73 @@
         </small>
 
         <button class="btn btn-outline-secondary btn-sm"
-                @if(!$adjustments->hasMorePages()) disabled @endif
-                onclick="window.location='{{ $adjustments->nextPageUrl() }}'">
+            @if(!$adjustments->hasMorePages()) disabled @endif
+            onclick="window.location='{{ $adjustments->nextPageUrl() }}'">
             Next
         </button>
     </div>
 
-{{-- Add Stock Adjustment Modal --}}
-<div class="modal fade" id="stockAdjustmentAddModal" tabindex="-1" aria-labelledby="stockAdjustmentAddModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
+    {{-- Add Stock Adjustment Modal --}}
+    <div class="modal fade" id="stockAdjustmentAddModal" tabindex="-1" aria-labelledby="stockAdjustmentAddModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
 
-      <div class="modal-header">
-        <h5 class="modal-title" id="stockAdjustmentAddModalLabel">Add Stock Adjustment</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="stockAdjustmentAddModalLabel">Add Stock Adjustment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
-      <form action="{{ route('stock_adjustments.store') }}" method="POST">
-        @csrf
-        <div class="modal-body">
+                <form action="{{ route('stock_adjustments.store') }}" method="POST">
+                    @csrf
+                    <div class="modal-body">
 
-          <div class="mb-3">
-            <label class="form-label">Item</label>
-            <select name="item_id" class="form-control" required>
-              <option value="">-- Select Item --</option>
-              @foreach($items as $item)
-                <option value="{{ $item->item_id }}">{{ $item->name }}</option>
-              @endforeach
-            </select>
-          </div>
+                        <div class="mb-3">
+                            <label class="form-label">Item</label>
+                            <select name="item_id" class="form-control" required>
+                                <option value="">-- Select Item --</option>
+                                @foreach($items as $item)
+                                <option value="{{ $item->item_id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-          <div class="mb-3">
-            <label class="form-label">Requested By</label>
-            <select name="requested_by" class="form-control" required>
-              <option value="">-- Select Employee --</option>
-              @foreach($employees as $emp)
-                <option value="{{ $emp->employee_id }}">{{ $emp->name }}</option>
-              @endforeach
-            </select>
-          </div>
+                        <div class="mb-3">
+                            <label class="form-label">Requested By</label>
+                            <select name="requested_by" class="form-control" required>
+                                <option value="">-- Select Employee --</option>
+                                @foreach($employees as $emp)
+                                <option value="{{ $emp->employee_id }}">{{ $emp->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-          <div class="mb-3">
-            <label class="form-label">Adjustment Type</label>
-            <select name="adjustment_type" class="form-control" required>
-              <option value="increase">Increase</option>
-              <option value="decrease">Decrease</option>
-            </select>
-          </div>
+                        <div class="mb-3">
+                            <label class="form-label">Adjustment Type</label>
+                            <select name="adjustment_type" class="form-control" required>
+                                <option value="increase">Increase</option>
+                                <option value="decrease">Decrease</option>
+                            </select>
+                        </div>
 
-          <div class="mb-3">
-            <label class="form-label">Quantity</label>
-            <input type="number" name="quantity" class="form-control" required>
-          </div>
+                        <div class="mb-3">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" name="quantity" class="form-control" required>
+                        </div>
 
-          <div class="mb-3">
-            <label class="form-label">Reason</label>
-            <textarea name="reason" class="form-control" required></textarea>
-          </div>
+                        <div class="mb-3">
+                            <label class="form-label">Reason</label>
+                            <textarea name="reason" class="form-control" required></textarea>
+                        </div>
 
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Save</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+
+            </div>
         </div>
-
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-success">Save</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        </div>
-      </form>
-
     </div>
-  </div>
-</div>
-@endsection
+    @endsection

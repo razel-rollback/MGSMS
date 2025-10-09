@@ -4,64 +4,40 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    /**
-     * Show the login form.
-     */
-    public function showLogin()
+    public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    /**
-     * Handle login attempt.
-     */
     public function login(Request $request)
     {
-        // validate input including role
-        $request->validate([
-            'email'    => 'required|email|exists:users,email',
-            'password' => 'required|min:6',
-        ]);
-
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
             $user = Auth::user();
 
-
-
-            // Role-based redirects
-            switch ($user->role->role_name) {
-                case 'Admin':
-                    return redirect()->route('dashboard');
-                case 'Inventory':
-                    return redirect()->route('dashboard');
-                case 'Production':
-                    return redirect()->route('dashboard');
-                default:
-                    return redirect()->route('home');
+            if ($user->role->role_name === 'Admin') {
+                return redirect()->route('dashboard');
+            } else if ($user->role->role_name === 'Inventory') {
+                return redirect()->route('purchase_order.index');
+            } else if ($user->role->role_name === 'Production') {
+                return redirect()->route('production.dashboard');
+            } else {
+                return redirect()->route('home');
             }
         }
 
-        // if login fails
-        return back()->withErrors([
-            'email' => 'Invalid credentials provided.',
-        ])->withInput();
+        return back()->withErrors(['email' => 'Invalid credentials.']);
     }
 
-    /**
-     * Handle logout.
-     */
-    public function logout(Request $request)
+    public function logout()
     {
         Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect('/login');
+        return redirect()->route('login');
     }
 }

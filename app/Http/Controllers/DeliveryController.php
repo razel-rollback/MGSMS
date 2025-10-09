@@ -108,7 +108,7 @@ class DeliveryController extends Controller
                 'po_id' => $po->po_id,
                 'supplier_id' => $po->supplier_id,
                 'delivered_date' => $validated['delivered_date'],
-                'received_by' => Auth::id() ?? null, // optional, if using authentication
+                'received_by' => auth()->user()->id, // optional, if using authentication
                 'status' => 'Pending',
             ]);
 

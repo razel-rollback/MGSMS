@@ -62,7 +62,7 @@ class StockInRequestController extends Controller
         // Create the main stock-in request
         $stockIn = StockInRequest::create([
             'delivery_id' => $request->delivery_id ?: null,
-            'requested_by' => Auth::user()->employee_id ?? 2,
+            'requested_by' => auth()->id(),
             'requested_at' => now(),
             'note' => $request->note,
         ]);
@@ -74,7 +74,11 @@ class StockInRequestController extends Controller
             InventoryItem::where('item_id', $itemData['item_id'])
                 ->increment('current_stock', $itemData['quantity']);
 
-            // Create Stock Movement log
+
+
+
+            /* manger approve
+             Create Stock Movement log
             StockMovement::create([
                 'item_id' => $itemData['item_id'],
                 'movement_type' => 'in',
@@ -83,9 +87,10 @@ class StockInRequestController extends Controller
                 'quantity' => $itemData['quantity'],
                 'created_by' => Auth::user()->employee_id ?? 2,
                 'note' => 'Stock-in via system (PO/DR: '
-                    . ($stockIn->po_id ? 'PO#' . $stockIn->po_id : ($stockIn->delivery_id ? 'DR#' . $stockIn->delivery_id : 'Manual'))
+                    . ($stockIn->po_id ? 'PO#' . $stockIn->po_number : ($stockIn->delivery_id ? 'DR#' . $stockIn->delivery_receipt : 'Manual'))
                     . ')',
             ]);
+           */
         }
 
         return redirect()->route('stock_in.index')->with('success', 'Stock in recorded successfully.');

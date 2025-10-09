@@ -49,7 +49,7 @@ class StockAdjustmentController extends Controller
         StockAdjustment::create($validated);
 
         return redirect()->route('stock_adjustments.index')
-                         ->with('success', 'Stock adjustment created successfully.');
+            ->with('success', 'Stock adjustment created successfully.');
     }
 
     /**
@@ -84,13 +84,12 @@ class StockAdjustmentController extends Controller
             'adjustment_type' => 'required|string|max:30',
             'quantity'        => 'required|integer',
             'reason'          => 'required|string|max:255',
-            'status'          => 'required|string|max:30',
         ]);
 
         $stockAdjustment->update($validated);
 
         return redirect()->route('stock_adjustments.index')
-                         ->with('success', 'Stock adjustment updated successfully.');
+            ->with('success', 'Stock adjustment updated successfully.');
     }
 
     /**
@@ -101,22 +100,14 @@ class StockAdjustmentController extends Controller
         $stockAdjustment->delete();
 
         return redirect()->route('stock_adjustments.index')
-                         ->with('success', 'Stock adjustment deleted successfully.');
+            ->with('success', 'Stock adjustment deleted successfully.');
     }
 
-    public function pending()
-    {
-        $adjustments = StockAdjustment::with(['inventoryItem','requester'])
-                        ->where('status', 'pending')
-                        ->get();
-
-        return view('Stock_adjustment.stock_adjustment-pending', compact('adjustments'));
-    }
 
     public function approve(StockAdjustment $adjustment)
     {
         $adjustment->update([
-            'status' => 'approved',
+            'status' => 'Approved',
             'approved_by' => auth()->id(),
             'approved_at' => now(),
         ]);
@@ -134,11 +125,11 @@ class StockAdjustmentController extends Controller
     public function reject(StockAdjustment $adjustment)
     {
         $adjustment->update([
-            'status' => 'rejected',
+            'status' => 'Disapproved',
             'approved_by' => auth()->id(),
             'approved_at' => now(),
         ]);
 
-        return back()->with('success', 'Adjustment rejected.');
+        return back()->with('success', 'Adjustment Disapproved.');
     }
 }

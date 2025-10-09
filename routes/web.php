@@ -10,7 +10,7 @@ use App\Http\Controllers\ProductionDashboardController;
 use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\StockAdjustmentController;
-use App\Http\Controllers\StockOutController;
+use App\Http\Controllers\StockOutRequestController;
 use App\Http\Controllers\StockReportController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\EmployeeController;
@@ -24,39 +24,55 @@ use App\Http\Controllers\StockInRequestController;
 Route::get('/', function () {
     return redirect()->route('login');
 });
-
+Route::get('/', function () {
+    echo "Welcome to Inventory Management System";
+})->name('home');
 
 // Route for Dashboard
-Route::get('/Dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-// Login Routes
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
-
-// Logout Route
-Route::post('/logout', function () {
-    Auth::logout();
-    return redirect()->route('login')->with('success', 'You have been logged out.');
-})->name('logout');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Manager Dashboard
-Route::prefix('manager')->group(function () {
-    Route::get('/dashboard', [ManagerDashboardController::class, 'index'])->name('manager.dashboard');
-    Route::get('/stock-requests', [ManagerDashboardController::class, 'stockRequests'])->name('manager.stock.requests');
-    Route::post('/request/{id}/approve', [ManagerDashboardController::class, 'approve'])->name('request.approve');
-    Route::post('/request/{id}/reject', [ManagerDashboardController::class, 'reject'])->name('request.reject');
-});
+Route::get('/pending-requests', [ManagerDashboardController::class, 'index'])->name('pending.requests');
+Route::patch('/delivery/{delivery_id}/approve', [ManagerDashboardController::class, 'approveDelivery'])->name('delivery.approve');
+Route::patch('/delivery/{delivery_id}/disapprove', [ManagerDashboardController::class, 'disapproveDelivery'])->name('delivery.disapprove');
+Route::patch('/purchase-order/{po_id}/approve', [ManagerDashboardController::class, 'approvePurchaseOrder'])->name('purchase-order.approve');
+Route::patch('/purchase-order/{po_id}/disapprove', [ManagerDashboardController::class, 'disapprovePurchaseOrder'])->name('purchase-order.disapprove');
+Route::patch('/stock-in/{stock_in_id}/approve', [ManagerDashboardController::class, 'approveStockIn'])->name('stock-in.approve');
+Route::patch('/stock-in/{stock_in_id}/disapprove', [ManagerDashboardController::class, 'disapproveStockIn'])->name('stock-in.disapprove');
+Route::patch('/stock-out/{stock_out_id}/approve', [ManagerDashboardController::class, 'approveStockOut'])->name('stock-out.approve');
+Route::patch('/stock-out/{stock_out_id}/disapprove', [ManagerDashboardController::class, 'disapproveStockOut'])->name('stock-out.disapprove');
+Route::patch('/stock-adjustment/{adjustment_id}/approve', [ManagerDashboardController::class, 'approveStockAdjustment'])->name('stock-adjustment.approve');
+Route::patch('/stock-adjustment/{adjustment_id}/disapprove', [ManagerDashboardController::class, 'disapproveStockAdjustment'])->name('stock-adjustment.disapprove');
+
+// Manager Stock Request Approval 
+Route::patch('/request/{id}/approve', [ManagerDashboardController::class, 'approve'])->name('request.approve');
+Route::patch('/request/{id}/reject', [ManagerDashboardController::class, 'reject'])->name('request.reject');
 
 
-// Production Staff Dashboard
-Route::middleware(['auth'])->group(function () {
-    Route::get('/production/dashboard', [ProductionDashboardController::class, 'index'])
-        ->name('production.dashboard');
+Route::get('/Productionstaff/dashboard', [ProductionDashboardController::class, 'dashboard'])
+    ->name('production.dashboard');
 
-    Route::post('/production/request-stock', [ProductionDashboardController::class, 'requestStock'])
-        ->name('production.requestStock');
-});
 
+Route::get('/Productionstaff/stock_request-index', [ProductionDashboardController::class, 'index'])
+    ->name('production.index');
+
+Route::get('/Productionstaff/stock_request-create', [ProductionDashboardController::class, 'create'])
+    ->name('production.create');
+
+Route::post('/production/request-stock', [ProductionDashboardController::class, 'store'])
+    ->name('production.store');
+Route::get('/production/{id}/edit', [ProductionDashboardController::class, 'edit'])->name('production.edit');
+Route::put('/production/{id}', [ProductionDashboardController::class, 'update'])->name('production.update');
+
+
+
+
+
+Route::get('/Dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 
 Route::resource('purchase_order', PurchaseOrderController::class);
@@ -81,7 +97,9 @@ Route::resource('stock_in', StockInRequestController::class);
 
 
 
-Route::resource('stock_out', StockOutController::class);
+Route::get('/stock-out-requests', [StockOutRequestController::class, 'index'])->name('stock-out.index');
+Route::get('/stock-out-requests/{stockOutRequest}', [StockOutRequestController::class, 'show'])->name('stock.out.requests.show');
+Route::patch('/stock-out-requests/{stockOutRequest}/validate', [StockOutRequestController::class, 'validate'])->name('stock.out.requests.validate')->middleware('auth');
 //Route::get('/Stock-Out', [StockOutController::class, 'index'])->name('stock_out_index');
 //Route::get('/Stock-Out/create', [StockOutController::class, 'create'])->name('stock_out_create');
 
@@ -89,6 +107,7 @@ Route::resource('stock_out', StockOutController::class);
 
 //Route::resource Stock Adjustment
 Route::resource('stock_adjustments', StockAdjustmentController::class);
+Route::get('/stock_adjustments/pending', [StockAdjustmentController::class, 'pending'])->name('stock_adjustments.pending');
 Route::get('/stock_adjustments/{id}', [StockAdjustmentController::class, 'show'])->name('stock_adjustments.show');
 
 //Route::resource('stock_report', StockReportController::class);
@@ -107,16 +126,3 @@ Route::get('/dashboard/top-selling', [DashboardController::class, 'topSellingAll
 
 //Route for Low Stock Items
 Route::get('/dashboard/low-stock', [DashboardController::class, 'lowStockAll'])->name('dashboard.lowStock');
-
-// Manager Stock Request Approval 
-Route::patch('/request/{id}/approve', [ManagerDashboardController::class, 'approve'])->name('request.approve');
-Route::patch('/request/{id}/reject', [ManagerDashboardController::class, 'reject'])->name('request.reject');
-
-// Production Staff Stock Out Request View
-Route::get('/production/stock-request', [ProductionDashboardController::class, 'createRequest'])->name('production.stockRequest.create');
-Route::get('/Productionstaff/stock_request-index', [ProductionDashboardController::class, 'stockRequestIndex'])
-    ->name('production.stockRequest.index');
-
-
-// Submit Stock Out Request
-Route::post('/production/stock-request', [ProductionDashboardController::class, 'storeRequest'])->name('production.stockRequest.store');

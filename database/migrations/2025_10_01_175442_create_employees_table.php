@@ -25,9 +25,9 @@ return new class extends Migration
 
             // Foreign key
             $table->foreign('user_id')
-                  ->references('id')->on('users')
-                  ->onUpdate('cascade')
-                  ->onDelete('restrict');
+                ->references('id')->on('users')
+                ->onUpdate('cascade')
+                ->onDelete('restrict');
         });
     }
 

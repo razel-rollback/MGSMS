@@ -23,11 +23,6 @@
             <input type="number" name="re_order_stock" class="form-control" value="{{ $item->re_order_stock }}" min="0" required>
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Current Stock</label>
-            <input type="number" name="current_stock" class="form-control" value="{{ $item->current_stock }}" min="0" required>
-        </div>
-
         <button type="submit" class="btn btn-primary">Update</button>
         <a href="{{ route('items.index') }}" class="btn btn-secondary">Cancel</a>
     </form>

@@ -2,62 +2,94 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\StockAdjustment;
+
 use Illuminate\Http\Request;
+use App\Models\Delivery;
+use App\Models\PurchaseOrder;
+use App\Models\StockInRequest;
+use App\Models\StockOutRequest;
+use App\Models\StockAdjustment;
 
 class ManagerDashboardController extends Controller
 {
     public function index()
     {
-        // Summary counts for dashboard cards
-        $pendingCount  = StockAdjustment::where('status', 'pending')->count();
-        $approvedCount = StockAdjustment::where('status', 'approved')->count();
-        $rejectedCount = StockAdjustment::where('status', 'rejected')->count();
+        // Fetch pending records
+        $deliveries = Delivery::where('status', 'Pending')->with(['purchaseOrder', 'supplier', 'receivedBy'])->get();
+        $purchaseOrders = PurchaseOrder::where('status', 'Pending')->with(['supplier'])->get();
+        $stockInRequests = StockInRequest::where('status', 'Pending')->with(['purchaseOrder', 'delivery', 'requester'])->get();
+        $stockOutRequests = StockOutRequest::where('status', 'Pending')->with(['jobOrder', 'requester'])->get();
+        $stockAdjustments = StockAdjustment::where('status', 'Pending')->with(['inventoryItem', 'requester'])->get();
 
-        return view('manager.manager-dashboard', compact('pendingCount', 'approvedCount', 'rejectedCount'));
+        return view('manager.manager-dashboard', compact(
+            'deliveries',
+            'purchaseOrders',
+            'stockInRequests',
+            'stockOutRequests',
+            'stockAdjustments'
+        ));
     }
 
-    public function stockRequests()
+    public function disapproveDelivery(Request $request, $delivery_id)
     {
-        $requests = StockAdjustment::with(['inventoryItem','requester'])
-                        ->orderBy('requested_at','desc')
-                        ->get();
-
-        return view('manager.stock-requests', compact('requests'));
+        $delivery = Delivery::findOrFail($delivery_id);
+        $delivery->update(['status' => 'Disapproved']);
+        return redirect()->back()->with('success', 'Delivery disapproved successfully.');
     }
 
-    public function approve($id)
+    public function approvePurchaseOrder(Request $request, $po_id)
     {
-        $adjustment = StockAdjustment::with('inventoryItem')->findOrFail($id);
-
-        $adjustment->update([
-            'status'      => 'approved',
-            'approved_by' => auth()->id(),
-            'approved_at' => now(),
-        ]);
-
-        // Update stock count
-        if ($adjustment->adjustment_type === 'increase') {
-            $adjustment->inventoryItem->increment('stock', $adjustment->quantity);
-        } elseif ($adjustment->adjustment_type === 'decrease') {
-            $adjustment->inventoryItem->decrement('stock', $adjustment->quantity);
-        }
-
-        return redirect()->route('manager.dashboard')
-                         ->with('success', "Request #{$id} approved and stock updated.");
+        $po = PurchaseOrder::findOrFail($po_id);
+        $po->update(['status' => 'Approved']);
+        return redirect()->back()->with('success', 'Purchase Order approved successfully.');
     }
 
-    public function reject($id)
+    public function disapprovePurchaseOrder(Request $request, $po_id)
     {
-        $adjustment = StockAdjustment::findOrFail($id);
+        $po = PurchaseOrder::findOrFail($po_id);
+        $po->update(['status' => 'Disapproved']);
+        return redirect()->back()->with('success', 'Purchase Order disapproved successfully.');
+    }
 
-        $adjustment->update([
-            'status'      => 'rejected',
-            'approved_by' => auth()->id(),
-            'approved_at' => now(),
-        ]);
+    public function approveStockIn(Request $request, $stock_in_id)
+    {
+        $request = StockInRequest::findOrFail($stock_in_id);
+        $request->update(['status' => 'Approved']);
+        return redirect()->back()->with('success', 'Stock In Request approved successfully.');
+    }
 
-        return redirect()->route('manager.dashboard')
-                         ->with('error', "Request #{$id} rejected.");
+    public function disapproveStockIn(Request $request, $stock_in_id)
+    {
+        $request = StockInRequest::findOrFail($stock_in_id);
+        $request->update(['status' => 'Disapproved']);
+        return redirect()->back()->with('success', 'Stock In Request disapproved successfully.');
+    }
+
+    public function approveStockOut(Request $request, $stock_out_id)
+    {
+        $request = StockOutRequest::findOrFail($stock_out_id);
+        $request->update(['status' => 'Approved']);
+        return redirect()->back()->with('success', 'Stock Out Request approved successfully.');
+    }
+
+    public function disapproveStockOut(Request $request, $stock_out_id)
+    {
+        $request = StockOutRequest::findOrFail($stock_out_id);
+        $request->update(['status' => 'Disapproved']);
+        return redirect()->back()->with('success', 'Stock Out Request disapproved successfully.');
+    }
+
+    public function approveStockAdjustment(Request $request, $adjustment_id)
+    {
+        $adjustment = StockAdjustment::findOrFail($adjustment_id);
+        $adjustment->update(['status' => 'Approved']);
+        return redirect()->back()->with('success', 'Stock Adjustment approved successfully.');
+    }
+
+    public function disapproveStockAdjustment(Request $request, $adjustment_id)
+    {
+        $adjustment = StockAdjustment::findOrFail($adjustment_id);
+        $adjustment->update(['status' => 'Disapproved']);
+        return redirect()->back()->with('success', 'Stock Adjustment disapproved successfully.');
     }
 }
