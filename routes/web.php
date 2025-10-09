@@ -82,7 +82,7 @@ Route::resource('stock_out', StockOutController::class);
 
 //Route::resource Stock Adjustment
 Route::resource('stock_adjustments', StockAdjustmentController::class);
-
+Route::get('/stock_adjustments/{id}', [StockAdjustmentController::class, 'show'])->name('stock_adjustments.show');
 
 //Route::resource('stock_report', StockReportController::class);
 Route::get('/Stock-Report', [StockReportController::class, 'index'])->name('stock_reports_index');
@@ -109,6 +109,9 @@ Route::patch('/request/{id}/reject', [ManagerDashboardController::class, 'reject
 
 // Production Staff Stock Out Request View
 Route::get('/production/stock-request', [ProductionDashboardController::class, 'createRequest'])->name('production.stockRequest.create');
+Route::get('/Productionstaff/stock_request-index', [ProductionDashboardController::class, 'stockRequestIndex'])
+    ->name('production.stockRequest.index');
+
 
 // Submit Stock Out Request
 Route::post('/production/stock-request', [ProductionDashboardController::class, 'storeRequest'])->name('production.stockRequest.store');

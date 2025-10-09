@@ -3,7 +3,6 @@
 @section('content')
 <div class="container-fluid">
     <h2 class="mb-4">Stock Adjustment</h2>
-
     {{-- Top Controls --}}
     <div class="d-flex justify-content-between align-items-center mb-3">
         {{-- Search --}}
@@ -159,18 +158,24 @@
         </div>
     </div>
 
-    {{-- Pagination --}}
+    <!-- Pagination -->
     <div class="d-flex justify-content-between align-items-center mt-3">
-        <div>
-            Showing {{ $adjustments->firstItem() ?? 0 }} 
-            to {{ $adjustments->lastItem() ?? 0 }} 
-            of {{ $adjustments->total() ?? 0 }} entries
-        </div>
-        <div>
-            {{ $adjustments->links('pagination::bootstrap-5') }}
-        </div>
+        <button class="btn btn-outline-secondary btn-sm"
+                @if($adjustments->onFirstPage()) disabled @endif
+                onclick="window.location='{{ $adjustments->previousPageUrl() }}'">
+            Previous
+        </button>
+
+        <small>
+            Page {{ $adjustments->currentPage() }} of {{ $adjustments->lastPage() }}
+        </small>
+
+        <button class="btn btn-outline-secondary btn-sm"
+                @if(!$adjustments->hasMorePages()) disabled @endif
+                onclick="window.location='{{ $adjustments->nextPageUrl() }}'">
+            Next
+        </button>
     </div>
-</div>
 
 {{-- Add Stock Adjustment Modal --}}
 <div class="modal fade" id="stockAdjustmentAddModal" tabindex="-1" aria-labelledby="stockAdjustmentAddModalLabel" aria-hidden="true">

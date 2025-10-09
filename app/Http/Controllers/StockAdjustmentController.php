@@ -12,14 +12,11 @@ class StockAdjustmentController extends Controller
     /**
      * Display a listing of the resource.
      */
-     public function index()
+    public function index()
     {
-         $adjustments = \App\Models\StockAdjustment::with(['inventoryItem', 'requester', 'approver'])
-        ->orderBy('created_at', 'desc')
-        ->paginate(10); 
-
-        $items = \App\Models\InventoryItem::all();
-        $employees = \App\Models\Employee::all();
+        $adjustments = StockAdjustment::paginate(10);
+        $items = InventoryItem::all();
+        $employees = Employee::all();
 
         return view('Stock_adjustment.stock_adjustment-index', compact('adjustments', 'items', 'employees'));
     }
@@ -58,10 +55,11 @@ class StockAdjustmentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(StockAdjustment $stockAdjustment)
+    public function show($id)
     {
-        $stockAdjustment->load(['inventoryItem', 'requester', 'approver']);
-        return view('Stock_adjustment.stock_adjustment', compact('stockAdjustment'));
+        $adjustment = StockAdjustment::with(['inventoryItem', 'requester'])->findOrFail($id);
+
+        return view('Stock_adjustment.stock_adjustment_show', compact('adjustment'));
     }
 
     /**
