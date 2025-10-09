@@ -2,64 +2,63 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\StockOut;
+use App\Models\StockOutRequest;
 use Illuminate\Http\Request;
 
 class StockOutController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        return view('Stock_out.stock_out_requested');
+        $stockOuts = StockOutRequest::latest()->paginate(10);
+        return view('Stock_out.index', compact('stockOuts')); 
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'job_order_id' => 'required|string|max:255',
+            'requested_by' => 'required|string|max:255',
+            'customer_name' => 'required|string|max:255',
+            'purpose' => 'required|string|max:255',
+            'due_date' => 'required|date',
+            'status' => 'nullable|string'
+        ]);
+
+        $stockOut = StockOutRequest::create($request->all());
+
+        return response()->json(['success' => 'Stock Out Request Created', 'data' => $stockOut]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(StockOut $stockOut)
+    public function show(StockOutRequest $stockOut)
     {
-        //
+        return response()->json($stockOut);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(StockOut $stockOut)
+    public function edit(StockOutRequest $stockOut)
     {
-        //
+        return response()->json($stockOut);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, StockOut $stockOut)
+    public function update(Request $request, StockOutRequest $stockOut)
     {
-        //
+        $request->validate([
+            'job_order_id' => 'required|string|max:255',
+            'requested_by' => 'required|string|max:255',
+            'customer_name' => 'required|string|max:255',
+            'purpose' => 'required|string|max:255',
+            'due_date' => 'required|date',
+            'status' => 'nullable|string'
+        ]);
+
+        $stockOut->update($request->all());
+
+        return response()->json(['success' => 'Stock Out Request Updated', 'data' => $stockOut]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(StockOut $stockOut)
+    public function destroy(StockOutRequest $stockOut)
     {
-        //
+        $stockOut->delete();
+
+        return response()->json(['success' => 'Stock Out Request Deleted']);
     }
 }

@@ -58,7 +58,7 @@
                         <td><span class="badge bg-warning text-dark">Low Stock</span></td>
                     </tr>
                     <tr>
-                        <td>3</td>
+                        <td>3</td> 
                         <td>Pillow</td>
                         <td>50</td>
                         <td>30</td>

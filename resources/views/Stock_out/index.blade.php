@@ -4,7 +4,6 @@
 <div class="col-md-12 p-4 bg-light">
 
 
-
     <!-- Action Buttons + Search -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="mb-0">Stock Out Requests</h5>
@@ -20,9 +19,9 @@
             </form>
 
             <!-- Request Stock Out -->
-            <button class="btn btn-primary btn-sm">
+            <a href="{{ route('production.stockRequest.create') }}" class="btn btn-primary btn-sm">
                 <i class="bi bi-plus-circle"></i> Request Stock Out
-            </button>
+            </a>
 
             <!-- Filters -->
             <button class="btn btn-outline-secondary btn-sm">

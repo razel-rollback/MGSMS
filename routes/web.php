@@ -84,12 +84,29 @@ Route::resource('stock_out', StockOutController::class);
 Route::resource('stock_adjustments', StockAdjustmentController::class);
 Route::get('/stock_adjustments/{id}', [StockAdjustmentController::class, 'show'])->name('stock_adjustments.show');
 
-//Route::resource('stock_report', StockReportController::class);
+// Stock Report Dashboard
 Route::get('/Stock-Report', [StockReportController::class, 'index'])->name('stock_reports_index');
+
+// Generate Report (with filters)
 Route::get('/Stock-Report/Generate', [StockReportController::class, 'generate'])->name('stock_reports_generate');
 
-Route::resource('suppliers', SupplierController::class);
-Route::resource('employees', EmployeeController::class);
+// Export to Excel
+Route::post('/Stock-Report/Export/Excel', [StockReportController::class, 'exportExcel'])->name('stock_reports.export_excel');
+
+// Export to PDF
+Route::post('/Stock-Report/Export/PDF', [StockReportController::class, 'exportPDF'])->name('stock_reports.export_pdf');
+
+// Supplier CRUD Views
+Route::get('/suppliers/create', [SupplierController::class, 'create'])->name('suppliers.create');
+Route::get('/suppliers/{supplier}/edit', [SupplierController::class, 'edit'])->name('suppliers.edit');
+
+// Item CRUD Views
+Route::get('/items/create', [ItemController::class, 'create'])->name('items.create');
+Route::get('/items/{item}/edit', [ItemController::class, 'edit'])->name('items.edit');
+
+// Employee CRUD Views
+Route::get('/employees/create', [EmployeeController::class, 'create'])->name('employees.create');
+Route::get('/employees/{employee}/edit', [EmployeeController::class, 'edit'])->name('employees.edit');
 
 //Route::resource Inventory Items
 Route::resource('items', InventoryItemController::class);

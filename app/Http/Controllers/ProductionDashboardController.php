@@ -43,4 +43,13 @@ class ProductionDashboardController extends Controller
         return redirect()->route('production.stockRequest.index')
             ->with('success', 'Stock request submitted successfully.');
     }
+
+    /**
+     * Show the form to create a new stock out request.
+     */
+    public function createRequest()
+    {
+        $items = InventoryItem::all();
+        return view('Productionstaff.stock_request_form', compact('items'));
+    }
 }
