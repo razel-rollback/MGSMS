@@ -26,7 +26,7 @@ class DashboardController extends Controller
         $productCategories = InventoryItem::distinct('unit')->count('unit');
 
         // Top Selling & Low Stock (preview only - top 5)
-        $topSelling = InventoryItem::orderByDesc('sold')->take(5)->get();
+        //$topSelling = InventoryItem::orderByDesc('sold')->take(5)->get();
         $lowStock   = InventoryItem::where('current_stock', '<=', 15)->take(5)->get();
 
         return view('dashboard.dashboard', compact(
@@ -40,7 +40,7 @@ class DashboardController extends Controller
             'toReorder',
             'totalProducts',
             'productCategories',
-            'topSelling',
+            //'topSelling',
             'lowStock'
         ));
     }

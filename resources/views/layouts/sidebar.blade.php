@@ -155,7 +155,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ route('inventory_items.index') }}" class="nav-link {{ request()->is('suppliers*') ? 'active' : '' }}">
+                <a href="{{ route('items.index') }}" class="nav-link {{ request()->is('suppliers*') ? 'active' : '' }}">
                     <i class="bi bi-people me-2"></i> Items
                 </a>
             </li>

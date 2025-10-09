@@ -9,7 +9,7 @@ class InventoryItemController extends Controller
 {
     public function index()
     {
-        $items = Item::orderBy('item_id', 'desc')->paginate(10);
+        $items = InventoryItem::orderBy('item_id', 'desc')->paginate(10);
         return view('Item.index', compact('items'));
     }
 
@@ -27,18 +27,18 @@ class InventoryItemController extends Controller
             'current_stock' => 'required|integer|min:0',
         ]);
 
-        Item::create($request->all());
+        InventoryItem::create($request->all());
 
         return redirect()->route('items.index')
             ->with('success', 'Item added successfully.');
     }
 
-    public function edit(Item $item)
+    public function edit(InventoryItem $item)
     {
         return view('Item.edit', compact('item'));
     }
 
-    public function update(Request $request, Item $item)
+    public function update(Request $request, InventoryItem $item)
     {
         $request->validate([
             'name' => 'required|string|max:255',
@@ -53,7 +53,7 @@ class InventoryItemController extends Controller
             ->with('success', 'Item updated successfully.');
     }
 
-    public function destroy(Item $item)
+    public function destroy(InventoryItem $item)
     {
         $item->delete();
 

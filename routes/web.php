@@ -22,7 +22,7 @@ use App\Http\Controllers\StockInRequestController;
 
 // Redirect root to dashboard
 Route::get('/', function () {
-    return redirect()->route('dashboard');
+    return redirect()->route('login');
 });
 
 

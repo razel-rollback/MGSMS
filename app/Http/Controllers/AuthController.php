@@ -12,51 +12,46 @@ class AuthController extends Controller
      */
     public function showLogin()
     {
-        return view('auth.login'); 
+        return view('auth.login');
     }
 
     /**
      * Handle login attempt.
      */
-        public function login(Request $request)
-        {
-            // validate input including role
-            $request->validate([
-                'email'    => 'required|email',
-                'password' => 'required|min:6',
-                'role'     => 'required|in:Admin,Inventory,Production', // match DB values
-            ]);
+    public function login(Request $request)
+    {
+        // validate input including role
+        $request->validate([
+            'email'    => 'required|email|exists:users,email',
+            'password' => 'required|min:6',
+        ]);
 
-            $credentials = $request->only('email', 'password');
+        $credentials = $request->only('email', 'password');
 
-            if (Auth::attempt($credentials)) {
-                $request->session()->regenerate();
-                $user = Auth::user();
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            $user = Auth::user();
 
-                // Validate selected role against user's actual role
-                if ($user->role->role_name !== $request->role) {
-                    Auth::logout();
-                    return redirect()->route('login')->with('error', 'Selected role does not match your account.');
-                }
 
-                // Role-based redirects
-                switch ($user->role->role_name) {
-                    case 'Admin':
-                        return redirect()->intended('/admin/dashboard');
-                    case 'Inventory':
-                        return redirect()->intended('/inventory/dashboard');
-                    case 'Production':
-                        return redirect()->intended('/Productionstaff/stock_request-index');
-                    default:
-                        return redirect()->intended('/home');
-                }
+
+            // Role-based redirects
+            switch ($user->role->role_name) {
+                case 'Admin':
+                    return redirect()->route('dashboard');
+                case 'Inventory':
+                    return redirect()->route('dashboard');
+                case 'Production':
+                    return redirect()->route('dashboard');
+                default:
+                    return redirect()->route('home');
             }
-
-            // if login fails
-            return back()->withErrors([
-                'email' => 'Invalid credentials provided.',
-            ])->withInput();
         }
+
+        // if login fails
+        return back()->withErrors([
+            'email' => 'Invalid credentials provided.',
+        ])->withInput();
+    }
 
     /**
      * Handle logout.
