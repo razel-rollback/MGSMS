@@ -12,6 +12,7 @@ use App\Models\StockInRequest;
 use App\Models\StockAdjustment;
 use App\Models\StockOutRequest;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ManagerDashboardController extends Controller
 {
@@ -138,25 +139,29 @@ class ManagerDashboardController extends Controller
     public function approveStockOut(Request $request, $stock_out_id)
     {
         $stockOutRequest = StockOutRequest::findOrFail($stock_out_id);
+
+        // Update status to Approved
         $stockOutRequest->update([
             'status' => 'Approved',
             'approved_by' => auth()->id(),
             'approved_at' => now(),
         ]);
 
-        // get all quantity and update inventory
-        foreach ($stockOutRequest->stockInItems as $stockInItem) {
-            $inventoryItem = InventoryItem::findOrFail($stockInItem->item_id);
-            $inventoryItem->decrement('current_stock', $stockOutRequest->quantity);
+        // Loop through the stock out items
+        foreach ($stockOutRequest->stockOutItems as $stockOutItem) {
+            $inventoryItem = InventoryItem::findOrFail($stockOutItem->item_id);
 
+            // Decrement available stock
+            $inventoryItem->decrement('current_stock', $stockOutItem->quantity);
 
+            // Record movement
             StockMovement::create([
-                'item_id' => $stockInItem->item_id,
+                'item_id' => $stockOutItem->item_id,
                 'movement_type' => 'out',
-                'quantity' => $stockInItem->quantity,
-                'reference_id' => $stockOutRequest->stock_in_id,
+                'quantity' => $stockOutItem->quantity,
+                'reference_id' => $stockOutRequest->stock_out_id,
                 'reference_type' => 'StockOutRequest',
-                'created_by' => $stockOutRequest->requester->user->id,
+                'created_by' => auth()->id(),
             ]);
         }
 
@@ -176,34 +181,66 @@ class ManagerDashboardController extends Controller
 
     public function approveStockAdjustment(Request $request, $adjustment_id)
     {
-        $adjustment = StockAdjustment::findOrFail($adjustment_id);
-        $adjustment->update([
-            'status' => 'Approved',
-            'approved_by' => auth()->id(),
-            'approved_at' => now(),
-        ]);
-        // get all quantity and update inventory
-        foreach ($adjustment->stockInItems as $stockInItem) {
-            $inventoryItem = InventoryItem::findOrFail($stockInItem->item_id);
+        DB::beginTransaction();
 
-            if ($adjustment->adjustment_type == 'increase') {
-                $inventoryItem->increment('current_stock', $stockInItem->quantity);
-            } else {
-                $inventoryItem->decrement('current_stock', $stockInItem->quantity);
+        try {
+            $adjustment = StockAdjustment::findOrFail($adjustment_id);
+
+            // Check if already approved
+            if ($adjustment->status === 'Approved') {
+                return redirect()->back()->with('error', 'This adjustment is already approved.');
             }
 
-
-            StockMovement::create([
-                'item_id' => $stockInItem->item_id,
-                'movement_type' => 'out',
-                'quantity' => $stockInItem->quantity,
-                'reference_id' => $adjustment->stock_in_id,
-                'reference_type' => 'StockOutRequest',
-                'created_by' => $adjustment->requester->user->id,
+            // Update adjustment status
+            $adjustment->update([
+                'status' => 'Approved',
+                'approved_by' => auth()->id(),
+                'approved_at' => now(),
             ]);
+
+            // Fetch related inventory item
+            $inventoryItem = InventoryItem::findOrFail($adjustment->item_id);
+
+            // Determine action based on type
+            if ($adjustment->adjustment_type === 'increase') {
+                $inventoryItem->increment('current_stock', $adjustment->quantity);
+                $movementType = 'in';
+            } else {
+                // Prevent negative stock
+                if ($inventoryItem->current_stock < $adjustment->quantity) {
+                    DB::rollBack();
+                    return redirect()->back()->with('error', "Not enough stock to decrease {$inventoryItem->name}.");
+                }
+
+                $inventoryItem->decrement('current_stock', $adjustment->quantity);
+                $movementType = 'out';
+            }
+
+            // Record the movement
+            StockMovement::create([
+                'item_id' => $adjustment->item_id,
+                'movement_type' => $movementType,
+                'quantity' => $adjustment->quantity,
+                'reference_id' => $adjustment->adjustment_id,
+                'reference_type' => 'StockAdjustment',
+                'created_by' => auth()->id(),
+            ]);
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Stock Adjustment approved successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error approving stock adjustment', [
+                'adjustment_id' => $adjustment_id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->back()->with('error', 'Failed to approve stock adjustment: ' . $e->getMessage());
         }
-        return redirect()->back()->with('success', 'Stock Adjustment approved successfully.');
     }
+
 
     public function disapproveStockAdjustment(Request $request, $adjustment_id)
     {

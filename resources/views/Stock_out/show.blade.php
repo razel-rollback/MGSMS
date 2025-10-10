@@ -6,6 +6,8 @@
     <!-- Header and Back Button -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="mb-0">Stock Out Request #{{ $stockOutRequest->stock_out_id }}</h5>
+
+
         @if ($stockOutRequest->status !== 'Validated' && Auth::check())
         <form action="{{ route('stock.out.requests.validate', $stockOutRequest->stock_out_id) }}" method="POST">
             @csrf
@@ -18,6 +20,38 @@
         <a href="{{ route('stock-out.index') }}" class="btn btn-outline-secondary btn-sm">
             <i class="bi bi-arrow-left"></i> Back to List
         </a>
+    </div>
+    <div>
+        @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        @endif
+
+        @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        @endif
+        @if (session('insufficient_items'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Insufficient Inventory:</strong>
+            <ul class="mt-2 mb-0">
+                @foreach (session('insufficient_items') as $item)
+                <li>
+                    {{ $item['item_name'] }} —
+                    Requested: {{ $item['requested_quantity'] }},
+                    Available: {{ $item['available_quantity'] }},
+                    Shortfall: {{ $item['shortfall'] }}
+                </li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        @endif
+
     </div>
 
     <!-- Stock Out Request Details -->

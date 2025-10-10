@@ -27,7 +27,11 @@ class DashboardController extends Controller
 
         // Top Selling & Low Stock (preview only - top 5)
         //$topSelling = InventoryItem::orderByDesc('sold')->take(5)->get();
-        $lowStock   = InventoryItem::where('current_stock', '<=', 15)->take(5)->get();
+        $lowStock = InventoryItem::whereColumn('current_stock', '<=', 're_order_stock')
+            ->orderBy('current_stock', 'asc')
+            ->paginate(10);
+
+
 
         return view('dashboard.dashboard', compact(
             'sales',
@@ -52,12 +56,20 @@ class DashboardController extends Controller
         return view('dashboard.top-selling', compact('topSelling'));
     }
 
-    // Full paginated Low Stock items
     public function lowStockAll()
     {
-        $lowStock = InventoryItem::where('current_stock', '<=', 15)
+        $lowStock = InventoryItem::select('*')
+            ->selectRaw("
+            CASE
+                WHEN current_stock <= re_order_stock THEN 1
+                WHEN current_stock <= re_order_stock * 1.5 THEN 2
+                ELSE 3
+            END as status_priority
+        ")
+            ->orderBy('status_priority', 'asc')
             ->orderBy('current_stock', 'asc')
             ->paginate(10); // 10 per page
-        return view('dashboard.low-stock', compact('lowStock'));
+
+        return view('dashboard.low-stock', ['inventoryItems' => $lowStock]);
     }
 }
