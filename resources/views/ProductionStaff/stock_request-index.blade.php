@@ -29,9 +29,19 @@
                 @forelse($requests as $request)
                 <tr>
                     <td>
-                        @foreach($request->stockOutItems as $item)
-                        <div>- {{ $item->inventoryItem->name ?? 'N/A' }} ({{ $item->quantity }})</div>
-                        @endforeach
+                        <div class="scrollable-items border rounded" style="max-height: 120px; overflow-y: auto;">
+                            <ul class="list-group list-group-flush">
+                                @foreach($request->stockOutItems as $item)
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>{{ $item->inventoryItem->name ?? 'N/A' }} </strong><br>
+                                        <small>Quantity: {{ $item->quantity }}</small><br>
+                                    </div>
+                                </li>
+                                @endforeach
+                            </ul>
+                        </div>
+
                     </td>
                     <td>{{ $request->stockOutItems->sum('quantity') }}</td>
                     <td>

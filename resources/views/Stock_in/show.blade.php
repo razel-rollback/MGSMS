@@ -19,12 +19,12 @@
                 </div>
                 <div class="col-md-6">
                     <strong>Status:</strong>
-                    @if ($stockIn->status === 'approved')
+                    @if ($stockIn->status === 'Approved')
                     <span class="badge bg-success">Approved</span>
-                    @elseif ($stockIn->status === 'pending')
+                    @elseif ($stockIn->status === 'Pending')
                     <span class="badge bg-warning text-dark">Pending</span>
                     @else
-                    <span class="badge bg-secondary">{{ ucfirst($stockIn->status) }}</span>
+                    <span class="badge bg-Danger">{{ ucfirst($stockIn->status) }}</span>
                     @endif
                 </div>
             </div>

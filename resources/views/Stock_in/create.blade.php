@@ -2,10 +2,19 @@
 
 @section('content')
 <div class="col-md-10 mx-auto bg-light p-4 rounded shadow-sm">
-    <h4 class="mb-3">Create Stock-In</h4>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">Stock-In Request Details</h4>
+        <a href="{{ route('stock_in.index') }}" class="btn btn-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+    </div>
 
     <form action="{{ route('stock_in.store') }}" method="POST" id="stockInForm">
         @csrf
+
+        @if(session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+        @endif
 
         <!-- Optional PO / DR -->
         <div class="row mb-3">
@@ -128,6 +137,13 @@
         document.getElementById('stockItemsTable').addEventListener('click', function(e) {
             if (e.target.classList.contains('removeRow')) {
                 e.target.closest('tr').remove();
+            }
+        });
+        document.getElementById('stockInForm').addEventListener('submit', function(e) {
+            const tableBody = document.querySelector('#stockItemsTable tbody');
+            if (tableBody.children.length === 0) {
+                e.preventDefault(); // stop form submission
+                alert('Please add at least one item before saving.');
             }
         });
     });

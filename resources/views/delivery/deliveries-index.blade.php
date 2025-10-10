@@ -133,7 +133,7 @@
     <div class="form-section p-3 bg-white rounded shadow-sm">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="mb-0">
-                <i class="bi bi-check-circle-fill me-2 text-success"></i>Delivered Items
+                <i class="bi bi-check-circle-fill me-2 text-success"></i>Delivered
             </h5>
             <span class="badge bg-success">{{ $delivered->total() }} delivered</span>
         </div>

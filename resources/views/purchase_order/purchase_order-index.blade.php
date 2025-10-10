@@ -45,9 +45,9 @@
         </div>
 
         <!-- Table -->
-        <div class="card-body p-3">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0 align-middle">
+        <div class="card-body p-3 ">
+            <div class="table-responsive" style=" min-height: 300px;">
+                <table class=" table table-hover mb-0 align-middle">
                     <thead class="table-light">
                         <tr>
                             <th>Purchase Number</th>

@@ -26,7 +26,7 @@
         <div class="row">
             <div class="col-md-6">
                 <p><strong>Job Order:</strong> {{ $stockOutRequest->jobOrder ? $stockOutRequest->jobOrder->job_order_id : 'N/A' }}</p>
-                <p><strong>Requested By:</strong> {{ $stockOutRequest->requester ? $stockOutRequest->requester->name : 'N/A' }}</p>
+                <p><strong>Requested By:</strong> {{ $stockOutRequest->requester ? $stockOutRequest->requester->fullname : 'N/A' }}</p>
                 <p><strong>Requested At:</strong> {{ $stockOutRequest->requested_at->format('Y-m-d H:i:s') }}</p>
                 <p><strong>Status:</strong> {{ $stockOutRequest->status }}</p>
             </div>

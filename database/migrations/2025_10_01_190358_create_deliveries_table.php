@@ -21,10 +21,13 @@ return new class extends Migration
             $table->unsignedBigInteger('received_by')->nullable();
             $table->timestamp('received_at')->nullable();
             $table->enum('status', ['Pending', 'Approved', 'Disapproved']);
+            $table->unsignedBigInteger('approve_by')->nullable();
+            $table->timestamp('approve_by_at')->useCurrent();
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('po_id')->references('po_id')->on('purchase_orders')->onDelete('set null');
             $table->foreign('supplier_id')->references('supplier_id')->on('suppliers')->onUpdate('cascade')->onDelete('restrict');
+            $table->foreign('approve_by')->references('employee_id')->on('employees')->onUpdate('cascade')->onDelete('set null');
             $table->foreign('received_by')->references('employee_id')->on('employees')->onUpdate('cascade')->onDelete('set null');
         });
     }

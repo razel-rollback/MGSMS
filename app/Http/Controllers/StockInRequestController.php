@@ -66,32 +66,13 @@ class StockInRequestController extends Controller
             'requested_at' => now(),
             'note' => $request->note,
         ]);
-
-        // Create stock-in items and update inventory + movement
         foreach ($validated['items'] as $itemData) {
             $stockIn->stockInItems()->create($itemData);
-
-            InventoryItem::where('item_id', $itemData['item_id'])
-                ->increment('current_stock', $itemData['quantity']);
-
-
-
-
-            /* manger approve
-             Create Stock Movement log
-            StockMovement::create([
-                'item_id' => $itemData['item_id'],
-                'movement_type' => 'in',
-                'reference_type' => 'StockInRequest',
-                'reference_id' => $stockIn->stock_in_id,
-                'quantity' => $itemData['quantity'],
-                'created_by' => Auth::user()->employee_id ?? 2,
-                'note' => 'Stock-in via system (PO/DR: '
-                    . ($stockIn->po_id ? 'PO#' . $stockIn->po_number : ($stockIn->delivery_id ? 'DR#' . $stockIn->delivery_receipt : 'Manual'))
-                    . ')',
-            ]);
-           */
         }
+
+
+        // Create stock-in items
+
 
         return redirect()->route('stock_in.index')->with('success', 'Stock in recorded successfully.');
     }
@@ -121,7 +102,7 @@ class StockInRequestController extends Controller
         $stockIn = StockInRequest::with(['purchaseOrder', 'delivery', 'stockInItems.inventoryItem'])->findOrFail($id);
 
         if ($stockIn->status === 'Approved') {
-            return redirect()->route('stockin.index')->with('error', 'Approved Stock-In requests cannot be edited.');
+            return redirect()->route('stock_in.index')->with('error', 'Approved Stock-In requests cannot be edited.');
         }
         $purchaseOrders = PurchaseOrder::all();
         $deliveries = Delivery::all();
@@ -138,7 +119,6 @@ class StockInRequestController extends Controller
     {
         // ✅ Validate input
         $validated = $request->validate([
-
             'delivery_id' => 'nullable|exists:deliveries,delivery_id',
             'note' => 'nullable|string|max:500',
             'items' => 'required|array|min:1',
@@ -157,7 +137,6 @@ class StockInRequestController extends Controller
             $stockIn->update([
                 'delivery_id' => $validated['delivery_id'] ?? null,
                 'note' => $validated['note'] ?? null,
-                //'requested_by' => auth()->user() ?? 2,
                 'status' => $stockIn->status, // keep current status
             ]);
 
@@ -173,7 +152,7 @@ class StockInRequestController extends Controller
             }
 
             // ✅ Optional: Auto log stock movement if approved or completed
-            if ($stockIn->status === 'approved' || $stockIn->status === 'completed') {
+            if (in_array($stockIn->status, ['Approved', 'Completed'])) { // Fixed status check (case-sensitive)
                 foreach ($validated['items'] as $item) {
                     StockMovement::create([
                         'item_id' => $item['item_id'],
@@ -189,7 +168,7 @@ class StockInRequestController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('stockin.index')
+                ->route('stock_in.index') // Fixed typo: 'stockin.index' -> 'stock_in.index'
                 ->with('success', 'Stock-In request updated successfully.');
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -203,12 +182,33 @@ class StockInRequestController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(StockInRequest $stockInRequest)
+    public function destroy($id)
     {
-        $stockIn = StockInRequest::findOrFail($stockInRequest);
-        if ($stockIn->status === 'Approved') {
-            return redirect()->route('stockin.index')->with('error', 'Approved Stock-In requests cannot be Deleted.');
+        DB::beginTransaction();
+
+        try {
+            $stockInRequest = StockInRequest::findOrFail($id);
+
+            if ($stockInRequest->status === 'Approved') {
+                throw new \Exception('Approved Stock-In requests cannot be deleted.');
+            }
+
+            // Optional: Delete related items first (cascade)
+            $stockInRequest->stockInItems()->delete();
+
+            // Permanent delete (bypass soft delete if needed; use $stockInRequest->delete() for soft delete)
+            $stockInRequest->forceDelete();
+
+            DB::commit();
+
+            return redirect()->route('stock_in.index')
+                ->with('success', 'Stock-In record deleted successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Stock-In Delete Error: ' . $e->getMessage());
+
+            return redirect()->route('stock_in.index')
+                ->with('error', $e->getMessage() ?? 'Failed to delete Stock-In record.');
         }
-        $stockIn->delete();
     }
 }

@@ -97,39 +97,13 @@ class StockAdjustmentController extends Controller
      */
     public function destroy(StockAdjustment $stockAdjustment)
     {
+        if ($stockAdjustment->status === 'Approved') {
+            return redirect()->route('stock_adjustments.index')
+                ->with('error', 'Cannot delete an approved stock adjustment.');
+        }
         $stockAdjustment->delete();
 
         return redirect()->route('stock_adjustments.index')
             ->with('success', 'Stock adjustment deleted successfully.');
-    }
-
-
-    public function approve(StockAdjustment $adjustment)
-    {
-        $adjustment->update([
-            'status' => 'Approved',
-            'approved_by' => auth()->id(),
-            'approved_at' => now(),
-        ]);
-
-        // Update stock count
-        if ($adjustment->adjustment_type === 'increase') {
-            $adjustment->inventoryItem->increment('stock', $adjustment->quantity);
-        } elseif ($adjustment->adjustment_type === 'decrease') {
-            $adjustment->inventoryItem->decrement('stock', $adjustment->quantity);
-        }
-
-        return back()->with('success', 'Adjustment approved and stock updated.');
-    }
-
-    public function reject(StockAdjustment $adjustment)
-    {
-        $adjustment->update([
-            'status' => 'Disapproved',
-            'approved_by' => auth()->id(),
-            'approved_at' => now(),
-        ]);
-
-        return back()->with('success', 'Adjustment Disapproved.');
     }
 }

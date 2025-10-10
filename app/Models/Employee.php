@@ -14,7 +14,7 @@ class Employee extends Model
     protected $primaryKey = 'employee_id';
     public $incrementing = true;
     protected $keyType = 'int';
-    
+
     protected $fillable = [
         'user_id',
         'first_name',
@@ -32,6 +32,15 @@ class Employee extends Model
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
+
+
+    // In Employee model
+    public function getFullnameAttribute()
+    {
+        return trim("{$this->first_name} {$this->middle_name} {$this->last_name}");
+    }
+
+
 
     /**
      * Relationship: Employee belongs to a User

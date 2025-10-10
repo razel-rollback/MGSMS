@@ -20,12 +20,8 @@ use App\Http\Controllers\LowStockItemController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\StockInRequestController;
 
-// Redirect root to dashboard
 Route::get('/', function () {
     return redirect()->route('login');
-});
-Route::get('/', function () {
-    echo "Welcome to Inventory Management System";
 })->name('home');
 
 // Route for Dashboard

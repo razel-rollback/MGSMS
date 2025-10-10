@@ -2,7 +2,12 @@
 
 @section('content')
 <div class="col-md-10 mx-auto bg-light p-4 rounded shadow-sm">
-    <h4 class="mb-3">Edit Stock-In Request</h4>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">Stock-In Request Details</h4>
+        <a href="{{ route('stock_in.index') }}" class="btn btn-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+    </div>
 
     <form action="{{ route('stock_in.update', $stockIn->stock_in_id) }}" method="POST" id="stockInEditForm">
         @csrf

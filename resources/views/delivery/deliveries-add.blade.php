@@ -103,47 +103,50 @@
                             </select>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="form-section mb-3 p-3 bg-white rounded shadow-sm">
+                            <h5 class="mt-3">Delivery Items</h5>
+                            <div class="row g-3 align-items-end mt-3">
+                                <div class="col-md-4">
+                                    <label for="item_id" class="form-label">Item</label>
+                                    <select id="item_id" class="form-select">
+                                        <option value="">Select Item</option>
+                                        @if(isset($purchaseOrder) && $purchaseOrder->purchaseOrderItems)
+                                        @foreach ($purchaseOrder->purchaseOrderItems as $item)
+                                        <option value="{{ $item->item_id }}" data-quantity="{{ $item->quantity }}">
+                                            {{ $item->inventoryItem->name }} (Ordered: {{ $item->quantity }})
+                                        </option>
+                                        @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <label for="quantity" class="form-label">Delivered Quantity</label>
+                                    <input type="number" id="quantity" class="form-control" min="1" value="1">
+                                </div>
+
+                                <div class="col-md-2">
+                                    <label for="unit_price" class="form-label">Unit Price</label>
+                                    <input type="number" id="unit_price" class="form-control" step="0.01">
+                                </div>
+
+                                <div class="col-md-2">
+                                    <button type="button" id="addItemBtn" class="btn btn-primary w-100">
+                                        <i class="bi bi-plus-circle"></i> Add
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="itemError" class="text-danger mt-2" style="display: none;"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
         </div>
 
         <!-- ===================== ADD ITEMS ===================== -->
-        <div class="form-section mb-3 p-3 bg-white rounded shadow-sm">
-            <h5 class="mt-3">Delivery Items</h5>
-            <div class="row g-3 align-items-end mt-3">
-                <div class="col-md-4">
-                    <label for="item_id" class="form-label">Item</label>
-                    <select id="item_id" class="form-select">
-                        <option value="">Select Item</option>
-                        @if(isset($purchaseOrder) && $purchaseOrder->purchaseOrderItems)
-                        @foreach ($purchaseOrder->purchaseOrderItems as $item)
-                        <option value="{{ $item->item_id }}" data-quantity="{{ $item->quantity }}">
-                            {{ $item->inventoryItem->name }} (Ordered: {{ $item->quantity }})
-                        </option>
-                        @endforeach
-                        @endif
-                    </select>
-                </div>
 
-                <div class="col-md-2">
-                    <label for="quantity" class="form-label">Delivered Quantity</label>
-                    <input type="number" id="quantity" class="form-control" min="1" value="1">
-                </div>
-
-                <div class="col-md-2">
-                    <label for="unit_price" class="form-label">Unit Price</label>
-                    <input type="number" id="unit_price" class="form-control" step="0.01">
-                </div>
-
-                <div class="col-md-2">
-                    <button type="button" id="addItemBtn" class="btn btn-primary w-100">
-                        <i class="bi bi-plus-circle"></i> Add
-                    </button>
-                </div>
-            </div>
-            <div id="itemError" class="text-danger mt-2" style="display: none;"></div>
-        </div>
 
         <!-- ===================== ITEM TABLE ===================== -->
         <div class="card shadow-sm">

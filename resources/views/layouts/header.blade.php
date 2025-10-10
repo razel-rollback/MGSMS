@@ -17,11 +17,11 @@
      </form>
 
      <!-- Notifications + User -->
-     <div class="d-flex align-items-center">
+     <div class="d-flex align-items-center gap-3 justify-content-center  gap-3">
          <div>
-             <p>{{ Auth::user()->email }}</p>
+             <p>{{ Auth::user()->email ?? 'guest' }}</p>
          </div>
-         <button class="btn btn-light position-relative me-3">
+         <button class="btn btn-light position-relative me-2">
              <i class="bi bi-bell fs-5"></i>
          </button>
          <img src="{{ asset('images/user.png') }}" class="rounded-circle" width="40" alt="User">

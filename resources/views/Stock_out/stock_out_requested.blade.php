@@ -31,7 +31,7 @@
 
     <!-- Stock Out Request Table -->
     <div class="bg-white p-3 rounded shadow-sm">
-        <div class="table-responsive">
+        <div class="table-responsive" style="height: 300px;">
             <table class="table table-hover table-bordered align-middle text-center">
                 <thead class="table-light">
                     <tr>
