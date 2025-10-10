@@ -18,8 +18,8 @@ return new class extends Migration
             $table->unsignedBigInteger('item_id')->nullable();
             $table->string('notes', 255)->nullable();
             $table->integer('quantity');
-            $table->decimal('unit_price', 12, 2);
-            $table->decimal('subtotal', 14, 2)->storedAs('quantity * unit_price');
+            $table->decimal('unit_price', 12, 2)->default(0.00);
+            $table->decimal('subtotal', 14, 2)->default(0.00);
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('job_order_id')->references('job_order_id')->on('job_orders')->onDelete('cascade');

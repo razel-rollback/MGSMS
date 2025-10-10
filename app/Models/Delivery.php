@@ -18,6 +18,8 @@ class Delivery extends Model
         'received_by',
         'received_at',
         'status',
+        'approve_by',
+        'approve_at',
     ];
 
     protected function casts(): array

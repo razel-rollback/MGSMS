@@ -22,7 +22,7 @@ return new class extends Migration
             $table->timestamp('received_at')->nullable();
             $table->enum('status', ['Pending', 'Approved', 'Disapproved']);
             $table->unsignedBigInteger('approve_by')->nullable();
-            $table->timestamp('approve_by_at')->useCurrent();
+            $table->timestamp('approve_at')->useCurrent();
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('po_id')->references('po_id')->on('purchase_orders')->onDelete('set null');

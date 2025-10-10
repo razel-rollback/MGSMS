@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->timestamp('order_date')->nullable();
             $table->date('due_date')->nullable();
-            $table->string('status', 30)->default('pending');
+            $table->string('status', 30)->default('Pending');
 
             $table->decimal('total_amount', 14, 2)->default(0.00);
             $table->decimal('deposit_amount', 14, 2)->default(0.00);
