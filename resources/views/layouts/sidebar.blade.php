@@ -151,7 +151,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ route('stock_reports_index') }}" class="nav-link {{ request()->is('Stock-Report*') ? 'active' : '' }}">
+                <a href="{{ route('reports.stock') }}" class="nav-link {{ request()->is('Stock-Report*') ? 'active' : '' }}">
                     <i class="bi bi-graph-up me-2"></i> Reports
                 </a>
             </li>

@@ -107,14 +107,19 @@ Route::get('/stock_adjustments/pending', [StockAdjustmentController::class, 'pen
 Route::get('/stock_adjustments/{id}', [StockAdjustmentController::class, 'show'])->name('stock_adjustments.show');
 
 //Route::resource('stock_report', StockReportController::class);
-Route::get('/Stock-Report', [StockReportController::class, 'index'])->name('stock_reports_index');
-Route::get('/Stock-Report/Generate', [StockReportController::class, 'generate'])->name('stock_reports_generate');
+// routes/web.php
+Route::get('/reports/stock', [StockReportController::class, 'index'])->name('reports.stock');
+Route::post('/reports/stock/generate', [StockReportController::class, 'generateReport'])->name('reports.generate');
+
+
 
 Route::resource('suppliers', SupplierController::class);
 Route::resource('employees', EmployeeController::class);
 
 //Route::resource Inventory Items
 Route::resource('items', InventoryItemController::class);
+
+
 
 
 //Route for Top Selling Stocks

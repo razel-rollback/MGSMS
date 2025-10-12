@@ -24,7 +24,7 @@ class AuthController extends Controller
             if ($user->role->role_name === 'Admin') {
                 return redirect()->route('dashboard');
             } else if ($user->role->role_name === 'Inventory') {
-                return redirect()->route('purchase_order.index');
+                return redirect()->route('dashbaord');
             } else if ($user->role->role_name === 'Production') {
                 return redirect()->route('production.dashboard');
             } else {

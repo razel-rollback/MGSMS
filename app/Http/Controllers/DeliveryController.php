@@ -156,6 +156,11 @@ class DeliveryController extends Controller
             'deliveryItems.inventoryItem'
         ])->findOrFail($id);
 
+        if ($delivery->status === 'Approved') {
+            return redirect()->route('delivery.index')
+                ->with('error', 'Cannot edit an approved delivery.');
+        }
+
         // Get the associated purchase order
         $purchaseOrder = $delivery->purchaseOrder;
 

@@ -15,6 +15,7 @@
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Status</th>
+                <th>Role</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -26,6 +27,7 @@
                 <td>{{ $employee->email }}</td>
                 <td>{{ $employee->phone }}</td>
                 <td>{{ $employee->is_active ? 'Active' : 'Inactive' }}</td>
+                <td>{{ $employee->user->role->role_name }}</td>
                 <td>
                     <a href="{{ route('employees.edit', $employee->employee_id) }}" class="btn btn-warning btn-sm">Edit</a>
                     <form action="{{ route('employees.destroy', $employee->employee_id) }}" method="POST" style="display:inline;">

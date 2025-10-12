@@ -8,7 +8,7 @@
         <h5 class="mb-0">Stock Out Request #{{ $stockOutRequest->stock_out_id }}</h5>
 
 
-        @if ($stockOutRequest->status !== 'Validated' && Auth::check())
+        @if (!in_array($stockOutRequest->status, ['Validated', 'Approved']) && Auth::check())
         <form action="{{ route('stock.out.requests.validate', $stockOutRequest->stock_out_id) }}" method="POST">
             @csrf
             @method('PATCH')

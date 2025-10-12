@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 
@@ -22,7 +23,8 @@ class EmployeeController extends Controller
      */
     public function create()
     {
-        return view('Employee.create');
+        $roles = Role::orderBy('role_name')->get();
+        return view('Employee.create', compact('roles'));
     }
 
     /**
@@ -30,23 +32,45 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
+        $request->merge([
+            'is_active' => $request->has('is_active'),
+        ]);
         $validated = $request->validate([
             'first_name'  => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',
             'last_name'   => 'required|string|max:255',
             'phone'       => 'nullable|string|max:20',
-            'email'       => 'required|email|unique:employees,email',
-            'is_active'   => 'nullable|boolean',
+            'email'       => 'required|email|unique:employees,email|unique:users,email',
+            'role_id'     => 'required|exists:roles,role_id',
+            'is_active'   => 'boolean',
         ]);
 
         $validated['is_active'] = $request->has('is_active')
             ? $request->boolean('is_active')
             : true;
 
-        Employee::create($validated);
+        // 🧱 Step 1: Create the User account first
+        $user = \App\Models\User::create([
+            'name'     => "{$validated['first_name']} {$validated['last_name']}",
+            'email'    => "{$validated['first_name']}.{$validated['last_name']}@MGS.com",
+            'password' => bcrypt('password123'), // 🔒 Default password (you can customize)
+            'role_id'  => $validated['role_id'],
+        ]);
 
-        return redirect()->route('employees.index')->with('success', 'Employee added successfully.');
+        // 🧱 Step 2: Create the Employee record and link to user
+        $employee = \App\Models\Employee::create([
+            'user_id'     => $user->id,
+            'first_name'  => $validated['first_name'],
+            'middle_name' => $validated['middle_name'] ?? null,
+            'last_name'   => $validated['last_name'],
+            'phone'       => $validated['phone'] ?? null,
+            'email'       => $validated['email'],
+            'is_active'   => $validated['is_active'],
+        ]);
+
+        return redirect()->route('employees.index')->with('success', 'Employee and user account created successfully.');
     }
+
 
     /**
      * Display the specified resource.
@@ -61,8 +85,10 @@ class EmployeeController extends Controller
      */
     public function edit(Employee $employee)
     {
-        return view('Employee.edit', compact('employee'));
+        $roles = \App\Models\Role::orderBy('role_name')->get();
+        return view('Employee.edit', compact('employee', 'roles'));
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -74,18 +100,35 @@ class EmployeeController extends Controller
             'middle_name' => 'nullable|string|max:255',
             'last_name'   => 'required|string|max:255',
             'phone'       => 'nullable|string|max:20',
-            'email'       => 'required|email|unique:employees,email,' . $employee->employee_id . ',employee_id',
+            'email'       => 'required|email|unique:employees,email,' . $employee->employee_id . ',employee_id|unique:users,email,' . $employee->user_id . ',id',
+            'role_id'     => 'required|exists:roles,role_id',
             'is_active'   => 'nullable|boolean',
         ]);
 
-        $validated['is_active'] = $request->has('is_active')
-            ? $request->boolean('is_active')
-            : $employee->is_active;
+        $validated['is_active'] = $request->has('is_active') ? $request->boolean('is_active') : false;
 
-        $employee->update($validated);
+        // Update employee record
+        $employee->update([
+            'first_name'  => $validated['first_name'],
+            'middle_name' => $validated['middle_name'] ?? null,
+            'last_name'   => $validated['last_name'],
+            'phone'       => $validated['phone'] ?? null,
+            'email'       => $validated['email'],
+            'is_active'   => $validated['is_active'],
+        ]);
 
-        return redirect()->route('employees.index')->with('success', 'Employee updated successfully.');
+        // Update linked user
+        if ($employee->user) {
+            $employee->user->update([
+                'name'    => "{$validated['first_name']} {$validated['last_name']}",
+                'email'   => "{$validated['first_name']}.{$validated['last_name']}@MGS.com",
+                'role_id' => $validated['role_id'],
+            ]);
+        }
+
+        return redirect()->route('employees.index')->with('success', 'Employee and user details updated successfully.');
     }
+
 
     /**
      * Remove the specified resource from storage.

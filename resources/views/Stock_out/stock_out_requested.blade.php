@@ -52,7 +52,23 @@
                         <td>{{ $request->jobOrder ? $request->jobOrder->job_order_id : 'N/A' }}</td>
                         <td>{{ $request->requester ? $request->requester->first_name : 'N/A' }}</td>
                         <td>{{ $request->requested_at->format('Y-m-d H:i:s') }}</td>
-                        <td>{{ $request->status }}</td>
+                        <td>
+                            @php
+                            $status = $request->status;
+                            $badgeClass = match($status) {
+                            'Pending' => 'bg-warning text-dark',
+                            'Validated' => 'bg-info text-dark',
+                            'Approved' => 'bg-success',
+                            'Disapproved' => 'bg-danger',
+                            default => 'bg-secondary'
+                            };
+                            @endphp
+
+                            <span class="badge {{ $badgeClass }}">
+                                {{ $status }}
+                            </span>
+                        </td>
+
                         <td>{{ $request->validator ? $request->validator->first_name : 'N/A' }}</td>
                         <td>{{ $request->approver ? $request->approver->first_name : 'N/A' }}</td>
                         <td>

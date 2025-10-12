@@ -161,7 +161,7 @@ class ManagerDashboardController extends Controller
                 'quantity' => $stockOutItem->quantity,
                 'reference_id' => $stockOutRequest->stock_out_id,
                 'reference_type' => 'StockOutRequest',
-                'created_by' => auth()->id(),
+                'created_by' => $stockOutRequest->requester->user->id,
             ]);
         }
 
