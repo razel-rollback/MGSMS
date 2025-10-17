@@ -66,7 +66,7 @@
                             <td>{{ $po->supplier->name ?? 'N/A' }}</td>
                             <td>{{ $po->order_date ? $po->order_date->format('m-d-Y') : '—' }}</td>
                             <td>{{ $po->expected_date ? \Carbon\Carbon::parse($po->expected_date)->format('m-d-Y') : '—' }}</td>
-                            <td>${{ number_format($po->total_amount, 2) }}</td>
+                            <td>₱{{ number_format($po->total_amount, 2) }}</td>
                             <td>
                                 @php
                                 $badgeClass = match($po->status) {
@@ -80,7 +80,7 @@
                             </td>
                             <td class="d-flex gap-2">
                                 <div>
-                                    <a href="javascript:void(0)" class="viewOrderBtn" data-id="{{ $po->po_id }}" title="View">
+                                    <a href="javascript:void(0)" class="viewOrderBtn btn btn-sm btn-primary" data-id="{{ $po->po_id }}" title="View">
                                         <i class="bi bi-eye"></i>
                                     </a>
                                 </div>
@@ -88,7 +88,7 @@
                                     <form action="{{ route('purchase_order.destroy', $po->po_id) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-link text-danger p-0" title="Delete"><i class="bi bi-trash"></i></button>
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
                                     </form>
                                 </div>
                             </td>

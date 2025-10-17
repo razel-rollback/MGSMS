@@ -96,7 +96,7 @@
                         </td>
                         <td>
                             <div class="btn-group d-flex gap-3" role="group">
-                                <button class="btn btn-sm btn-outline-primary view-details-btn"
+                                <button class="btn btn-sm btn-primary view-details-btn"
                                     data-id="{{ $delivery->po_id }}" title="View Details">
                                     <i class="bi bi-eye"></i>
                                 </button>
@@ -235,19 +235,19 @@
                             @endif
                         </td>
                         <td class="d-flexgap-3">
-                            <button class="btn btn-sm btn-outline-primary view-delivered-btn"
+                            <button class="btn btn-sm btn-primary view-delivered-btn"
                                 data-id="{{ $delivery->delivery_id }}" title="View Details">
                                 <i class="bi bi-eye"></i>
                             </button>
                             <a href="{{ route('delivery.edit', $delivery->delivery_id) }}"
-                                class="btn btn-sm btn-outline-warning" title="Edit Delivery">
+                                class="btn btn-sm btn-warning" title="Edit Delivery">
                                 <i class="bi bi-pencil"></i>
                             </a>
 
                             <form action="{{ route('delivery.destroy', $delivery->delivery_id) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete Delivery">
+                                <button type="submit" class="btn btn-sm btn-danger" title="Delete Delivery">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </form>

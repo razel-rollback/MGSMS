@@ -32,7 +32,7 @@ class PurchaseOrderController extends Controller
         }
 
         // Paginate with query string so search stays on next/prev
-        $purchaseOrders = $query->paginate(5)->withQueryString();
+        $purchaseOrders = $query->paginate(10)->withQueryString();
 
         return view('purchase_order.purchase_order-index', compact('purchaseOrders'));
     }

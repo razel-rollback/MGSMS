@@ -57,7 +57,7 @@
                                 @endif
                             </td>
                             <td class="d-flex gap-2">
-                                <a href="{{ route('stock_in.show', $stockIn->stock_in_id) }}" class="btn btn-sm btn-info">
+                                <a href="{{ route('stock_in.show', $stockIn->stock_in_id) }}" class="btn btn-sm btn-primary">
                                     <i class="bi bi-eye"></i>
                                 </a>
                                 <a href="{{ route('stock_in.edit', $stockIn->stock_in_id) }}" class="btn btn-sm btn-warning">

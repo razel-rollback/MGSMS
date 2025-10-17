@@ -63,7 +63,7 @@
                         <td>{{ $request->validator ? $request->validator->first_name : 'N/A' }}</td>
                         <td>{{ $request->approver ? $request->approver->first_name : 'N/A' }}</td>
                         <td>
-                            <a href="{{ route('stock.out.requests.show', $request->stock_out_id) }}" class="btn btn-sm btn-outline-primary">
+                            <a href="{{ route('stock.out.requests.show', $request->stock_out_id) }}" class="btn btn-sm btn-primary">
                                 <i class="bi bi-eye"></i>
                             </a>
                         </td>

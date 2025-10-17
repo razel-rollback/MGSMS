@@ -73,18 +73,18 @@
                             </td>
                             <td class="text-center">
                                 <!-- View button -->
-                                <a href="{{ route('stock_adjustments.show', $adjustment->adjustment_id) }}" class="btn btn-sm btn-outline-secondary">
+                                <a href="{{ route('stock_adjustments.show', $adjustment->adjustment_id) }}" class="btn btn-sm btn-primary">
                                     <i class="bi bi-eye"></i>
                                 </a>
 
                                 <!-- Edit button triggers modal -->
-                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ $adjustment->adjustment_id }}">
+                                <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ $adjustment->adjustment_id }}">
                                     <i class="bi bi-pencil"></i>
                                 </button>
                                 <form action="{{ route('stock_adjustments.destroy', $adjustment->adjustment_id) }}" method="POST" style="display: inline;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this adjustment?')">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this adjustment?')">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </form>
