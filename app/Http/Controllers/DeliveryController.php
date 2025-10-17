@@ -23,15 +23,16 @@ class DeliveryController extends Controller
             ->where('delivery_status', '!=', 'Fully Delivered')
             ->orderByRaw("
         CASE
-            WHEN expected_date = ? THEN 1
-            WHEN expected_date > ? THEN 2
-            ELSE 3
-        END, expected_date ASC
+            WHEN expected_date = ? THEN 1 -- Prioritize records where the expected date is today
+            WHEN expected_date > ? THEN 2 -- Next, prioritize records where the expected date is in the future
+            ELSE 3 -- Finally, prioritize records where the expected date is in the past
+        END, expected_date ASC -- Sort by expected_date in ascending order within each group
     ", [$today, $today])
             ->paginate(10)
             ->withQueryString();
 
         $delivered = Delivery::with(['supplier', 'purchaseOrder'])
+            ->orderByRaw("CASE WHEN status = 'pending' THEN 0 ELSE 1 END")
             ->latest('delivered_date')
             ->paginate(10)
             ->withQueryString();
@@ -240,8 +241,23 @@ class DeliveryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Delivery $delivery)
+    public function destroy($id)
     {
-        //
+        $delivery = Delivery::findOrFail($id);
+
+        // Check if the delivery status is "Approved"
+        if ($delivery->status === 'Approved') {
+            return redirect()->route('delivery.index')->with('error', 'Cannot delete an approved delivery.');
+        }
+
+        // Revert the associated PO's delivery_status to "Not Delivered"
+        $delivery->purchaseOrder()->update(['delivery_status' => 'Not Delivered']);
+
+        try {
+            $delivery->forceDelete(); // Permanently delete the delivery
+            return redirect()->route('delivery.index')->with('success', 'Delivery deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('delivery.index')->with('error', 'Failed to delete delivery: ' . $e->getMessage());
+        }
     }
 }

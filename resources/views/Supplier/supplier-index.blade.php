@@ -12,10 +12,10 @@
 
     <!-- Flash message -->
     @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
     @endif
 
     <!-- Table -->
@@ -35,34 +35,34 @@
                     </thead>
                     <tbody>
                         @forelse ($suppliers as $index => $supplier)
-                            <tr>
-                                <td class="text-center">{{ $suppliers->firstItem() + $index }}</td>
-                                <td>{{ $supplier->name }}</td>
-                                <td>{{ $supplier->email }}</td>
-                                <td>{{ $supplier->phone }}</td>
-                                <td>{{ $supplier->address }}</td>
-                                <td class="text-center">
-                                    <!-- Fixed edit route -->
-                                    <a href="{{ route('suppliers.edit', $supplier) }}" class="btn btn-sm btn-primary">
-                                        <i class="bi bi-pencil-square"></i> Edit
-                                    </a>
+                        <tr>
+                            <td class="text-center">{{ $suppliers->firstItem() + $index }}</td>
+                            <td>{{ $supplier->name }}</td>
+                            <td>{{ $supplier->email }}</td>
+                            <td>{{ $supplier->phone }}</td>
+                            <td>{{ $supplier->address }}</td>
+                            <td class="text-center">
+                                <!-- Fixed edit route -->
+                                <a href="{{ route('suppliers.edit', $supplier) }}" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </a>
 
-                                    <!-- Fixed delete route -->
-                                    <form action="{{ route('suppliers.destroy', $supplier) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" 
-                                            class="btn btn-sm btn-danger" 
-                                            onclick="return confirm('Are you sure you want to delete this supplier?')">
-                                            <i class="bi bi-trash"></i> Delete
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
+                                <!-- Fixed delete route -->
+                                <form action="{{ route('suppliers.destroy', $supplier) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                        class="btn btn-sm btn-danger"
+                                        onclick="return confirm('Are you sure you want to delete this supplier?')">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
                         @empty
-                            <tr>
-                                <td colspan="6" class="text-center text-muted">No suppliers found.</td>
-                            </tr>
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">No suppliers found.</td>
+                        </tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -71,11 +71,11 @@
 
         <!-- Pagination -->
         @if($suppliers->hasPages())
-            <div class="card-footer">
-                <div class="d-flex justify-content-end">
-                    {{ $suppliers->links() }}
-                </div>
+        <div class="card-footer">
+            <div class="d-flex justify-content-end">
+                {{ $suppliers->links() }}
             </div>
+        </div>
         @endif
     </div>
 </div>

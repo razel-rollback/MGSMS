@@ -265,13 +265,14 @@
             const itemId = selected.value;
             const itemName = selected.text.split(' (Ordered:')[0]; // Remove the ordered quantity part
             const orderedQty = parseInt(selected.dataset.quantity) || 0;
-            const price = parseFloat(unitPriceInput.value) || 0;
+            const price = parseFloat(unitPriceInput.value);
             const qty = parseInt(qtyInput.value) || 0;
 
             if (!itemId) return showError('Please select an item.');
             if (qty <= 0) return showError('Please enter a valid quantity.');
             if (qty > orderedQty) return showError('Delivered quantity cannot exceed ordered quantity.');
             if (addedItems.has(itemId)) return showError('This item has already been added.');
+            if (price === null || isNaN(price) || price <= 0) return showError('Please enter a valid unit price.');
 
             const subtotal = qty * price;
             total += subtotal;

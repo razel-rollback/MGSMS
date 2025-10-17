@@ -3,13 +3,21 @@
 @section('content')
 <div class="container-fluid">
     <h2 class="mb-4">Stock Adjustment</h2>
+    @if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    @endif
+    @if(session('error'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    @endif
+
     {{-- Top Controls --}}
     <div class="d-flex justify-content-between align-items-center mb-3">
-        {{-- Search --}}
-        <form class="d-flex" method="GET" action="{{ route('stock_adjustments.index') }}">
-            <input type="text" name="search" class="form-control me-2" placeholder="Search" value="{{ request('search') }}">
-            <button type="submit" class="btn btn-primary">Search</button>
-        </form>
 
         {{-- Action Buttons --}}
         <div class="d-flex gap-2">
@@ -29,8 +37,8 @@
     {{-- Table --}}
     <div class="card shadow-sm">
         <div class="card-body p-0">
-            <div class="table-responsive" style="height: 300px;">
-                <table class="table table-bordered mb-0">
+            <div class="table-responsive">
+                <table id="stockadjTable" class="table table-bordered mb-0">
                     <thead class="table-light">
                         <tr>
                             <th>ID</th>
@@ -73,6 +81,13 @@
                                 <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ $adjustment->adjustment_id }}">
                                     <i class="bi bi-pencil"></i>
                                 </button>
+                                <form action="{{ route('stock_adjustments.destroy', $adjustment->adjustment_id) }}" method="POST" style="display: inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this adjustment?')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
                             </td>
 
                             <!-- Modal -->
@@ -106,17 +121,18 @@
                                                 <div class="mb-3">
                                                     <label>Requested By</label>
                                                     <select name="requested_by" class="form-control" required>
-                                                        @forelse($employees as $emp)
+                                                        @php
+                                                        $uniqueEmployees = $employees->unique('fullname');
+                                                        @endphp
+                                                        @forelse($uniqueEmployees as $emp)
                                                         <option value="{{ $emp->employee_id }}"
                                                             {{ optional($adjustment)->requested_by == $emp->employee_id ? 'selected' : '' }}>
-                                                            {{ $adjustment->requester->fullname}}
+                                                            {{ $emp->fullname }}
                                                         </option>
                                                         @empty
                                                         <option disabled>No employees found</option>
                                                         @endforelse
                                                     </select>
-
-
                                                 </div>
 
                                                 <div class="mb-3">
@@ -137,14 +153,7 @@
                                                     <textarea name="reason" class="form-control" required>{{ $adjustment->reason }}</textarea>
                                                 </div>
 
-                                                <div class="mb-3">
-                                                    <label>Status</label>
-                                                    <select name="status" class="form-control" required>
-                                                        <option value="pending" {{ $adjustment->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                                        <option value="approved" {{ $adjustment->status == 'approved' ? 'selected' : '' }}>Approved</option>
-                                                        <option value="rejected" {{ $adjustment->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                                                    </select>
-                                                </div>
+
                                             </div>
 
                                             <div class="modal-footer">
@@ -164,25 +173,6 @@
                 </table>
             </div>
         </div>
-    </div>
-
-    <!-- Pagination -->
-    <div class="d-flex justify-content-between align-items-center mt-3">
-        <button class="btn btn-outline-secondary btn-sm"
-            @if($adjustments->onFirstPage()) disabled @endif
-            onclick="window.location='{{ $adjustments->previousPageUrl() }}'">
-            Previous
-        </button>
-
-        <small>
-            Page {{ $adjustments->currentPage() }} of {{ $adjustments->lastPage() }}
-        </small>
-
-        <button class="btn btn-outline-secondary btn-sm"
-            @if(!$adjustments->hasMorePages()) disabled @endif
-            onclick="window.location='{{ $adjustments->nextPageUrl() }}'">
-            Next
-        </button>
     </div>
 
     {{-- Add Stock Adjustment Modal --}}
@@ -249,3 +239,25 @@
         </div>
     </div>
     @endsection
+
+    @push('scripts')
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+
+    <script>
+        $(document).ready(function() {
+            $('#stockadjTable').DataTable({ // Corrected selector
+                pageLength: 10,
+                lengthMenu: [5, 10, 25],
+                order: [],
+                language: {
+                    search: "Search:",
+                    lengthMenu: "Show _MENU_ entries",
+                    info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                }
+            });
+        });
+    </script>
+    @endpush

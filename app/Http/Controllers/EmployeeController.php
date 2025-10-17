@@ -13,8 +13,8 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        // Show employees ordered by employee_id ascending, paginated
-        $employees = Employee::orderBy('employee_id', 'asc')->paginate(10);
+        // Show all employees ordered by employee_id ascending
+        $employees = Employee::orderBy('employee_id', 'asc')->get(); // Changed paginate(10) to get()
         return view('Employee.index', compact('employees'));
     }
 

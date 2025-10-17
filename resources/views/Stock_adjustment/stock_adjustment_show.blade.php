@@ -25,7 +25,7 @@
                 </tr>
                 <tr>
                     <th>Requested By</th>
-                    <td>{{ $adjustment->requester->name ?? 'N/A' }}</td>
+                    <td>{{ $adjustment->requester->fullname ?? 'N/A' }}</td>
                 </tr>
                 <tr>
                     <th>Reason</th>
@@ -35,11 +35,11 @@
                     <th>Status</th>
                     <td>
                         @if($adjustment->status === 'approved')
-                            <span class="badge bg-success">Approved</span>
+                        <span class="badge bg-success">Approved</span>
                         @elseif($adjustment->status === 'rejected')
-                            <span class="badge bg-danger">Rejected</span>
+                        <span class="badge bg-danger">Rejected</span>
                         @else
-                            <span class="badge bg-warning text-dark">Pending</span>
+                        <span class="badge bg-warning text-dark">Pending</span>
                         @endif
                     </td>
                 </tr>
@@ -49,9 +49,9 @@
                 </tr>
             </table>
             <!-- Back Button -->
-                <a href="{{ route('stock_adjustments.index') }}" class="btn btn-outline-secondary mb-3">
-                    <i class="bi bi-arrow-left"></i> Back
-                </a>    
+            <a href="{{ route('stock_adjustments.index') }}" class="btn btn-outline-secondary mb-3">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
         </div>
     </div>
 </div>

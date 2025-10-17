@@ -7,15 +7,6 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="mb-0">Stock Out Requests</h5>
         <div class="d-flex align-items-center gap-2">
-            <!-- Search Form -->
-            <form action="#" method="GET" class="d-flex">
-                <div class="input-group input-group-sm">
-                    <input type="search" name="query" class="form-control border-primary" placeholder="Search">
-                    <button class="btn btn-primary" type="submit">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </div>
-            </form>
 
             <!-- Filters -->
             <button class="btn btn-outline-secondary btn-sm">
@@ -31,8 +22,8 @@
 
     <!-- Stock Out Request Table -->
     <div class="bg-white p-3 rounded shadow-sm">
-        <div class="table-responsive" style="height: 300px;">
-            <table class="table table-hover table-bordered align-middle text-center">
+        <div class="table-responsive">
+            <table id="stockInTable" class="table table-hover table-bordered align-middle text-center">
                 <thead class="table-light">
                     <tr>
                         <th scope="col">Stock Out ID</th>
@@ -86,13 +77,30 @@
             </table>
         </div>
 
-        <!-- Pagination -->
-        <div class="d-flex justify-content-between align-items-center mt-3">
-            <button class="btn btn-outline-secondary btn-sm">Previous</button>
-            <small>Page {{ $stockOutRequests->currentPage() }} of {{ $stockOutRequests->lastPage() }}</small>
-            <button class="btn btn-outline-secondary btn-sm">Next</button>
-        </div>
     </div>
 
 </div>
 @endsection
+
+
+@push('scripts')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+
+<script>
+    $(document).ready(function() {
+        $('#stockInTable').DataTable({ // Corrected selector
+            pageLength: 10,
+            lengthMenu: [5, 10, 25],
+            order: [],
+            language: {
+                search: "Search:",
+                lengthMenu: "Show _MENU_ entries",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+            }
+        });
+    });
+</script>
+@endpush

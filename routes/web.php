@@ -63,6 +63,7 @@ Route::post('/production/request-stock', [ProductionDashboardController::class, 
     ->name('production.store');
 Route::get('/production/{id}/edit', [ProductionDashboardController::class, 'edit'])->name('production.edit');
 Route::put('/production/{id}', [ProductionDashboardController::class, 'update'])->name('production.update');
+Route::delete('/production/delete/request-stock/{id}', [ProductionDashboardController::class, 'destroy'])->name('production.destroy');
 
 
 

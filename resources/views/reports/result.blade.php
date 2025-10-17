@@ -22,7 +22,6 @@
     <div class="mb-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Stock Report - {{ ucfirst(str_replace('_', ' ', $reportType)) }}</h2>
-            <button onclick="window.print()" class="btn btn-secondary">Print Report</button>
         </div>
         <div class="mt-3">
             <a href="{{ route('reports.stock') }}" class="btn btn-primary">Back to Reports</a>
@@ -67,11 +66,23 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
-
+<!-- DataTables Buttons JS -->
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
+<!-- Buttons HTML5 export -->
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<!-- PDF export -->
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+<!-- JSZip for Excel export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
     $(document).ready(function() {
         $('table').DataTable({
             pageLength: 10, // show 10 rows per page
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'csv', 'excel', 'pdf', 'print'
+            ],
             lengthMenu: [5, 10, 25, 50, 100],
             ordering: true, // enable column sorting
             searching: true, // enable search box

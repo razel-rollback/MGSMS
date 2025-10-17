@@ -18,7 +18,9 @@ class PurchaseOrderController extends Controller
     public function index(Request $request)
     {
         // Build the query
-        $query = PurchaseOrder::with('supplier')->latest();
+        $query = PurchaseOrder::with('supplier')
+            ->orderByRaw("CASE WHEN status = 'Pending' THEN 0 ELSE 1 END")
+            ->latest();
 
         // Apply search if provided
         if ($request->filled('search')) {
@@ -30,7 +32,7 @@ class PurchaseOrderController extends Controller
         }
 
         // Paginate with query string so search stays on next/prev
-        $purchaseOrders = $query->paginate(10)->withQueryString();
+        $purchaseOrders = $query->paginate(5)->withQueryString();
 
         return view('purchase_order.purchase_order-index', compact('purchaseOrders'));
     }
@@ -222,7 +224,7 @@ class PurchaseOrderController extends Controller
             //  Proceed with soft delete
             $order->delete();
 
-            return redirect()->route('purchase-orders.index')
+            return redirect()->route('purchase_order.index')
                 ->with('success', 'Purchase Order deleted successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to delete: ' . $e->getMessage());

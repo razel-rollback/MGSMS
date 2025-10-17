@@ -15,13 +15,13 @@
     <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
     @if (session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div> <!-- Fixed: alert-success and session('success') -->
+    <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
     <!-- ===================== TABLE CARD ===================== -->
     <div class="card shadow-sm">
         <div class="card-body">
-            <div class="table-responsive" style="height: 300px;">
+            <div class="table-responsive">
                 <table id="stockInTable" class="table table-bordered table-striped align-middle w-100">
                     <thead class="table-light">
                         <tr>
@@ -56,7 +56,7 @@
                                 <span class="badge bg-danger">{{ ucfirst($stockIn->status) }}</span>
                                 @endif
                             </td>
-                            <td class="text-center">
+                            <td class="d-flex gap-2">
                                 <a href="{{ route('stock_in.show', $stockIn->stock_in_id) }}" class="btn btn-sm btn-info">
                                     <i class="bi bi-eye"></i>
                                 </a>
@@ -66,8 +66,7 @@
                                 <form action="{{ route('stock_in.destroy', $stockIn->stock_in_id) }}" method="POST" class="d-inline"> <!-- Fixed route name -->
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger"
-                                        onclick="return confirm('Are you sure you want to delete this record?')">
+                                    <button type="submit" class="btn btn-sm btn-danger">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </form>
@@ -88,14 +87,21 @@
 @endsection
 
 @push('scripts')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+
 <script>
     $(document).ready(function() {
-        $('#stockInTable').DataTable({
-            responsive: true,
-            order: [
-                [0, 'asc']
-            ],
-            pageLength: 10
+        $('#stockInTable').DataTable({ // Corrected selector
+            pageLength: 5,
+            order: [],
+            language: {
+                search: "Search:",
+                lengthMenu: "Show _MENU_ entries",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+            }
         });
     });
 </script>

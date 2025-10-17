@@ -9,7 +9,7 @@
         </a>
     </div>
 
-    <form action="{{ route('stock_in.update', $stockIn->stock_in_id) }}" method="POST" id="stockInEditForm">
+    <form action="{{ route('stock_in.update', $stockIn->stock_in_id) }}" method="POST" id="stockInEditForm" data-row-index="{{ count($stockIn->stockInItems) }}">
         @csrf
         @method('PUT')
 
@@ -89,45 +89,97 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Blade expression safely passed via a data attribute to avoid JS parse errors
-        const rowIndexInit = document.getElementById('stockInEditForm').dataset.rowIndex;
-        let rowIndex = parseInt(rowIndexInit) || 0;
+    // Initialize row index from Blade data attribute
+    const rowIndexInit = document.getElementById('stockInEditForm').dataset.rowIndex;
+    let rowIndex = parseInt(rowIndexInit) || 0;
 
-        const itemOptions = `{!! str_replace("\n", "", addslashes(
-            collect($items)->map(fn($inv) => "<option value='{$inv->item_id}'>{$inv->name}</option>")->implode('')
-        )) !!}`;
+    // Pre-rendered item options for dynamic rows
+    const itemOptions = `{!! str_replace("\n", "", addslashes(
+        collect($items)->map(fn($inv) => "<option value='{$inv->item_id}'>{$inv->name}</option>")->implode('')
+    )) !!}`;
 
-        document.getElementById('addItemRow').addEventListener('click', function() {
-            const tableBody = document.querySelector('#stockItemsTable tbody');
-            const newRow = document.createElement('tr');
+    // Function to check for duplicate items
+    function hasDuplicateItems() {
+        const selects = document.querySelectorAll('#stockItemsTable tbody select[name^="items"]');
+        const selectedItemIds = new Set();
 
-            newRow.innerHTML = `
-                <td>
-                    <select name="items[${rowIndex}][item_id]" class="form-control" required>
-                        <option value="">-- Select Item --</option>
-                        ${itemOptions}
-                    </select>
-                </td>
-                <td>
-                    <input type="number" name="items[${rowIndex}][quantity]" class="form-control" min="1" required>
-                </td>
-                <td>
-                    <input type="number" name="items[${rowIndex}][unit_price]" class="form-control" min="0" step="0.01" required>
-                </td>
-                <td class="text-center">
-                    <button type="button" class="btn btn-danger btn-sm removeRow">✕</button>
-                </td>
-            `;
+        for (const select of selects) {
+            const selectedValue = select.value;
+            if (selectedValue) {
+                if (selectedItemIds.has(selectedValue)) {
+                    return true; // Duplicate found
+                }
+                selectedItemIds.add(selectedValue);
+            }
+        }
+        return false; // No duplicates
+    }
 
-            tableBody.appendChild(newRow);
-            rowIndex++;
+    // Add new item row
+    document.getElementById('addItemRow').addEventListener('click', function() {
+        const tableBody = document.querySelector('#stockItemsTable tbody');
+        const newRow = document.createElement('tr');
+
+        newRow.innerHTML = `
+            <td>
+                <select name="items[${rowIndex}][item_id]" class="form-control" required>
+                    <option value="">-- Select Item --</option>
+                    ${itemOptions}
+                </select>
+            </td>
+            <td>
+                <input type="number" name="items[${rowIndex}][quantity]" class="form-control" min="1" required>
+            </td>
+            <td>
+                <input type="number" name="items[${rowIndex}][unit_price]" class="form-control" min="0" step="0.01" required>
+            </td>
+            <td class="text-center">
+                <button type="button" class="btn btn-danger btn-sm removeRow">✕</button>
+            </td>
+        `;
+
+        tableBody.appendChild(newRow);
+
+        // Attach event listener to the newly added select element
+        const newSelect = newRow.querySelector('select');
+        newSelect.addEventListener('change', function() {
+            if (hasDuplicateItems()) {
+                alert('This item is already added. Please select a different item.');
+                this.value = ''; // Reset the selection
+            }
         });
 
-        document.getElementById('stockItemsTable').addEventListener('click', function(e) {
-            if (e.target.classList.contains('removeRow')) {
-                e.target.closest('tr').remove();
+        rowIndex++;
+    });
+
+    // Remove item row
+    document.getElementById('stockItemsTable').addEventListener('click', function(e) {
+        if (e.target.classList.contains('removeRow')) {
+            e.target.closest('tr').remove();
+        }
+    });
+
+    // Prevent form submission if no items are present
+    document.getElementById('stockInEditForm').addEventListener('submit', function(e) {
+        const tableBody = document.querySelector('#stockItemsTable tbody');
+        if (tableBody.children.length === 0) {
+            e.preventDefault(); // Stop form submission
+            alert('Please add at least one item before saving.');
+        } else if (hasDuplicateItems()) {
+            e.preventDefault(); // Stop form submission
+            alert('Duplicate items are not allowed. Please resolve the issue before saving.');
+        }
+    });
+
+    // Attach change event listeners to pre-existing rows
+    document.querySelectorAll('#stockItemsTable tbody select[name^="items"]').forEach(select => {
+        select.addEventListener('change', function() {
+            if (hasDuplicateItems()) {
+                alert('This item is already added. Please select a different item.');
+                this.value = ''; // Reset the selection
             }
         });
     });
+});
 </script>
 @endpush

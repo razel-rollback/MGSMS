@@ -101,68 +101,73 @@
                     </tbody>
 
                 </table>
+                <div class="card-footer d-flex justify-content-center">
+                    @if ($purchaseOrders->hasPages())
+                    {{ $purchaseOrders->onEachSide(1)->links() }}
+                    @else
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item disabled"><span class="page-link">1</span></li>
+                        </ul>
+                    </nav>
+                    @endif
+                </div>
                 <!-- Purchase Order Details Modal -->
-                <div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg modal-dialog-centered">
-                        <div class="modal-content shadow-sm">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="orderDetailsLabel">Order Details</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
+            </div>
+            <div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content shadow-sm">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="orderDetailsLabel">Order Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
 
-                            <div class="modal-body">
-                                <!-- Order Info -->
-                                <div id="orderInfo" class=" row mb-3">
+                        <div class="modal-body">
+                            <!-- Order Info -->
+                            <div id="orderInfo" class=" row mb-3">
 
-                                    <div class="col">
-                                        <p><strong>Purchase Order Number:</strong> <span id="po_number"></span></p>
-                                        <p><strong>Supplier:</strong> <span id="supplier_name"></span></p>
-                                        <p><strong>Order Date:</strong> <span id="order_date"></span></p>
-                                    </div>
-                                    <div class="col">
-                                        <p><strong>Expected Date:</strong> <span id="expected_date"></span></p>
-                                        <p><strong>Total Amount:</strong> ₱<span id="total_amount"></span></p>
-                                        <p><strong>Status:</strong> <span id="status" class="badge bg-warning text-dark"></span></p>
-                                    </div>
+                                <div class="col">
+                                    <p><strong>Purchase Order Number:</strong> <span id="po_number"></span></p>
+                                    <p><strong>Supplier:</strong> <span id="supplier_name"></span></p>
+                                    <p><strong>Order Date:</strong> <span id="order_date"></span></p>
                                 </div>
-
-                                <hr>
-
-                                <!-- Order Items -->
-                                <h6>Order Items:</h6>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered align-middle text-center">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th>Item Name</th>
-                                                <th>Unit</th>
-                                                <th>Quantity</th>
-                                                <th>Unit Price</th>
-                                                <th>Subtotal</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="orderItemsTableBody"></tbody>
-                                    </table>
+                                <div class="col">
+                                    <p><strong>Expected Date:</strong> <span id="expected_date"></span></p>
+                                    <p><strong>Total Amount:</strong> ₱<span id="total_amount"></span></p>
+                                    <p><strong>Status:</strong> <span id="status" class="badge bg-warning text-dark"></span></p>
                                 </div>
                             </div>
 
-                            <div class="modal-footer">
-                                <form id="editForm" method="GET" class="my-0 py-0 px-0 mx-0">
-                                    <input type="hidden" id="po_id_input" name="po_id">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-warning">
-                                        <i class="bi bi-pencil-square"></i> Edit
-                                    </button>
-                                </form>
+                            <hr>
+
+                            <!-- Order Items -->
+                            <h6>Order Items:</h6>
+                            <div class="table-responsive">
+                                <table class="table table-bordered align-middle text-center">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Item Name</th>
+                                            <th>Unit</th>
+                                            <th>Quantity</th>
+                                            <th>Unit Price</th>
+                                            <th>Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="orderItemsTableBody"></tbody>
+                                </table>
                             </div>
                         </div>
+
+                        <div class="modal-footer">
+                            <form id="editForm" method="GET" class="my-0 py-0 px-0 mx-0">
+                                <input type="hidden" id="po_id_input" name="po_id">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                </div>
-
-
-
-                <div class="card-footer d-flex justify-content-center">
-                    {{ $purchaseOrders->links() }}
                 </div>
             </div>
         </div>

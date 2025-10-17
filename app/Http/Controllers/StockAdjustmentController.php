@@ -14,7 +14,8 @@ class StockAdjustmentController extends Controller
      */
     public function index()
     {
-        $adjustments = StockAdjustment::paginate(10);
+        $adjustments = StockAdjustment::orderByRaw("CASE WHEN status = 'Pending' THEN 0 ELSE 1 END")
+            ->get();
         $items = InventoryItem::all();
         $employees = Employee::all();
 
@@ -95,8 +96,9 @@ class StockAdjustmentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(StockAdjustment $stockAdjustment)
+    public function destroy($id)
     {
+        $stockAdjustment = StockAdjustment::findOrFail($id);
         if ($stockAdjustment->status === 'Approved') {
             return redirect()->route('stock_adjustments.index')
                 ->with('error', 'Cannot delete an approved stock adjustment.');

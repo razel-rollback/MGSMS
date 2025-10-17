@@ -20,23 +20,10 @@ class StockOutRequestController extends Controller
         // Initialize query
         $query = StockOutRequest::with(['jobOrder', 'requester', 'validator', 'approver']);
 
-        // Handle search
-        if ($request->has('query') && !empty($request->query('query'))) {
-            $search = $request->query('query');
-            $query->where(function ($q) use ($search) {
-                $q->where('stock_out_id', 'like', "%{$search}%")
-                    ->orWhere('status', 'like', "%{$search}%")
-                    ->orWhereHas('jobOrder', function ($q) use ($search) {
-                        $q->where('job_order_id', 'like', "%{$search}%");
-                    })
-                    ->orWhereHas('requester', function ($q) use ($search) {
-                        $q->where('first_name', 'like', "%{$search}%");
-                    });
-            });
-        }
-
-        // Paginate results
-        $stockOutRequests = $query->paginate(10);
+        // Prioritize "pending" status and paginate results
+        $stockOutRequests = $query
+            ->orderByRaw("CASE WHEN status = 'pending' THEN 0 ELSE 1 END")
+            ->get();
 
         // Return view with data
         return view('Stock_out.stock_out_requested', compact('stockOutRequests'));

@@ -10,6 +10,8 @@
         @csrf
         @method('PUT')
 
+
+
         @if($errors->any())
         @foreach ($errors->all() as $error)
         <div>{{ $error }}</div>
@@ -341,6 +343,4 @@
         }
     });
 </script>
-
-
 @endpush

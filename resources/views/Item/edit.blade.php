@@ -3,7 +3,21 @@
 @section('content')
 <div class="container">
     <h3 class="mb-3">Edit Item</h3>
-
+    @if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+    @endif
+    <!-- Display validation errors -->
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
     <form action="{{ route('items.update', $item) }}" method="POST">
         @csrf
         @method('PUT')

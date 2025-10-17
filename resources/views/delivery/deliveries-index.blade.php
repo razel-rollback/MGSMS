@@ -122,11 +122,17 @@
             </table>
         </div>
 
-        @if($deliveries->hasPages())
-        <div class="d-flex justify-content-center mt-3">
-            {{ $deliveries->links() }}
+        <div class="card-footer d-flex justify-content-center">
+            @if ($deliveries->hasPages())
+            {{ $deliveries->onEachSide(1)->links() }}
+            @else
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item disabled"><span class="page-link">1</span></li>
+                </ul>
+            </nav>
+            @endif
         </div>
-        @endif
     </div>
 
     <!-- ===================== DELIVERED ITEMS ===================== -->
@@ -238,6 +244,14 @@
                                 <i class="bi bi-pencil"></i>
                             </a>
 
+                            <form action="{{ route('delivery.destroy', $delivery->delivery_id) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete Delivery">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+
                         </td>
                     </tr>
                     @empty
@@ -255,11 +269,18 @@
             </table>
         </div>
 
-        @if($delivered->hasPages())
-        <div class="d-flex justify-content-center mt-3">
-            {{ $delivered->links() }}
+
+        <div class="card-footer d-flex justify-content-center">
+            @if ($delivered->hasPages())
+            {{ $delivered->onEachSide(1)->links() }}
+            @else
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item disabled"><span class="page-link">1</span></li>
+                </ul>
+            </nav>
+            @endif
         </div>
-        @endif
     </div>
 </div>
 

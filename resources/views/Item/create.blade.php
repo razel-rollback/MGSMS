@@ -3,7 +3,11 @@
 @section('content')
 <div class="container">
     <h3 class="mb-3">Add Item</h3>
-
+    @if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+    @endif
     <form action="{{ route('items.store') }}" method="POST">
         @csrf
 

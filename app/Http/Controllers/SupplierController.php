@@ -31,15 +31,22 @@ class SupplierController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'email' => 'required|email|max:255|unique:suppliers,email',
             'phone' => 'required|string|max:20',
             'address' => 'required|string|max:255',
         ]);
 
-        Supplier::create($request->all());
+        try {
+            Supplier::create($request->all());
+            return redirect()->route('suppliers.index')->with('success', 'Supplier created successfully.');
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() === '23000') { // SQLSTATE[23000]: Integrity constraint violation
+                return redirect()->back()->withInput()->withErrors(['email' => 'The email address is already in use.']);
+            }
 
-        return redirect()->route('suppliers.index')
-            ->with('success', 'Supplier added successfully!');
+            // Handle other database exceptions
+            return redirect()->back()->withInput()->withErrors(['error' => 'An unexpected error occurred. Please try again.']);
+        }
     }
 
     /**
@@ -53,19 +60,28 @@ class SupplierController extends Controller
     /**
      * Update the specified resource in storage.
      */
+
+
     public function update(Request $request, Supplier $supplier)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:suppliers,email,' . $supplier->id,
+            'email' => 'required|email|unique:suppliers,email,' . $supplier->supplier_id . ',supplier_id',
             'phone' => 'required|string|max:20',
             'address' => 'required|string|max:255',
         ]);
 
-        $supplier->update($request->all());
+        try {
+            $supplier->update($request->all());
+            return redirect()->route('suppliers.index')->with('success', 'Supplier updated successfully.');
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() === '23000') { // SQLSTATE[23000]: Integrity constraint violation
+                return redirect()->back()->withInput()->withErrors(['email' => 'The email address is already in use.']);
+            }
 
-        return redirect()->route('suppliers.index')
-            ->with('success', 'Supplier updated successfully!');
+            // Handle other database exceptions
+            return redirect()->back()->withInput()->withErrors(['error' => 'An unexpected error occurred. Please try again.']);
+        }
     }
 
     /**
